@@ -62,6 +62,7 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
     w.profileWidget = {title: 'profile', view: "components/profile/profile.html", show: true, expand: true, parent: 'smallerWidget', order: 2, canBeUsedAsTopBar: true, topBarView: "components/profile/profile-topbar.html"};
     w.relationshipWidget = {title: 'relationships', view: "components/relationship/relationship.html", show: true, expand: true, parent: 'smallerWidget', order: 3};
     w.notesWidget = {title: 'notes', view: "components/notes/notes.html", show: true, expand: true, parent: 'smallerWidget', order: 4};
+    w.vaccinationWidget = {title: 'vaccination', view: "components/vaccination/vaccination.html", show: true, expand: true, parent: 'smallerWidget', order: 1};
     w.messagingWidget = {title: 'messaging', view: "components/messaging/messaging.html", show: false, expand: true, parent: 'smallerWidget', order: 5};
     var defaultLayout = new Object();
 
@@ -3392,6 +3393,41 @@ i
             return orgUnits.some(function(orgUnit){
                 return orgUnit.id === idFromPath && orgUnit.id !== lastId;
             });
+        });
+    }
+})
+.service('VaccineCertService', function ($http, VacCertURL) {
+    this.certReady = function (teiId) {
+        return new Promise((accept, reject) => {
+            console.log("Sending ready check...");
+            $http.get(VacCertURL + "exists/" + teiId).then((resp) => {
+                if (resp.status === 200) {
+                    accept(VacCertURL + teiId+".pdf", VacCertURL + teiId + "-text.pdf");
+                } else {
+                    reject(resp);
+                }
+            }, (err) => {
+                reject(err);
+            });
+        });
+    }
+
+    this.persist = function (uid, pdf1, pdf2) {
+        return new Promise((accept, reject) => {
+            $http({
+                    method: 'POST',
+                    url: VacCertURL,
+                    data: {uid, pdf1, pdf2},
+                    headers: {'Content-Type': 'application/json'}
+                }).success(function(resp){
+                    if (resp.status === 202) {
+                        accept(VacCertURL + teiId+".pdf", VacCertURL + teiId + "-text.pdf");
+                    } else {
+                        reject(resp);
+                    }
+                }).error(function(resp){
+                    reject(resp);
+                });
         });
     }
 });

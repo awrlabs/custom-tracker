@@ -1,0 +1,53 @@
+<div class="panel panel-default-custom" ng-controller="VaccinationController">
+    <div class="panel-heading handle bold">
+        {{vaccinationWidget.title| translate}}
+        <span class="pull-right widget-link">
+            <a class="small-horizontal-spacing" href ng-click="expandCollapse(vaccinationWidget)">
+                <span ng-show="vaccinationWidget.expand"><i class="fa fa-chevron-up"
+                        ng-attr-title="{{collapseLabel}}"></i></span>
+                <span ng-show="!vaccinationWidget.expand"><i class="fa fa-chevron-down"
+                        ng-attr-title="{{expandLabel}}"></i></span>
+            </a>
+            <a ng-show="userAuthority.canAdministerDashboard || !lockedList[selectedProgram.id]"
+                class="small-horizontal-spacing" href ng-click="removeWidget(vaccinationWidget)"
+                ng-attr-title="{{removeLabel}}"><i class="fa fa-times-circle"></i></a>
+        </span>
+    </div>
+    <div ng-show="vaccinationWidget.expand" class="panel-body dashboard-widget-container">
+        
+        <!-- notes section begins -->
+        <div>
+            {{eligibility}}
+            <div ng-show="!certificate.eligibility" class="alert alert-danger">
+                <p>Not eligible to issue a ceriticate.</p>
+                <ul>
+                    
+                </ul>
+            </div>
+            <div ng-show="certificate.eligibility" class="remove-default-padding">
+                <div class="add-default-padding" ng-if="certificate.url1===undefined">
+                    <button type="button" class="btn btn-primary" ng-click="issue()">
+                        <i class="fa fa-certificate "></i>
+                        {{'issue_cert'| translate}}
+                    </button>
+                </div>
+                <div class="add-default-padding" ng-if="certificate.url1">
+                    <input type="text" ng-model="certificate.url" class="form-control" disabled />
+                    <button type="button" class="btn btn-primary" ng-click="viewCert2()">
+                        <i class="fa fa-certificate "></i>
+                        {{'view_cert1'| translate}}
+                    </button>
+                    <button type="button" class="btn btn-primary" ng-click="viewCert1()">
+                        <i class="fa fa-certificate "></i>
+                        {{'view_cert2'| translate}}
+                    </button>
+
+                    <button type="button" class="btn btn-primary" ng-click="sendSMS()">
+                        <i class="fa fa-commenting-o"></i>
+                        {{'send_cert_sms'| translate}}
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>

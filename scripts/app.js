@@ -45,6 +45,7 @@ import '../components/home/lists/lists-controller.js';
 import '../components/home/search/search-controller.js';
 import '../components/topbar/topbar-controller.js';
 import '../components/teiAudit/tei-audit-controller.js';
+import '../components/vaccination/vaccination-controller.js';
 
 import L from 'leaflet';
 delete L.Icon.Default.prototype._getIconUrl;
@@ -69,10 +70,12 @@ import 'leaflet-draw/dist/leaflet.draw.css';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-contextmenu/dist/leaflet.contextmenu.css';
 
+
 /* App Module */
 angular.module('trackerCapture')
 
 .value('DHIS2URL', '../api')
+.value('VacCertURL', 'http://localhost:8080/')
 
 .value('DHIS2COORDINATESIZE', 6)
 
