@@ -36,6 +36,9 @@
                 </div>
                 <div class="add-default-padding" ng-if="certificate.url1">
                     <input type="text" ng-model="certificate.url1" class="form-control" disabled />
+                    <div>
+                        <img ng-src="{{qrImage}}" width="180" />
+                    </div>
                     <a type="button" class="btn btn-primary" ng-if="certificate.url1" ng-href="{{certificate.url1}}"
                         target="_blank">
                         <i class="fa fa-download"></i>
@@ -47,7 +50,8 @@
                         {{'view_cert2'| translate}}
                     </a>
 
-                    <button type="button" class="btn btn-primary" ng-click="sendSMS()" ng-if="certificate.url1 && certificate.phone.value">
+                    <button type="button" class="btn btn-primary" ng-click="sendSMS()"
+                        ng-if="certificate.url1 && certificate.phone.value">
                         <i class="fa fa-commenting-o"></i>
                         {{'send_cert_sms'| translate}}
                     </button>

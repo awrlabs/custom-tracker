@@ -2,6 +2,13 @@
 
 import qrcode from 'qrcode-generator';
 import ngQrcode from 'angular-qrcode';
+import pdfMake from 'pdfmake/build/pdfmake';
+import pdfFonts from 'pdfmake/build/vfs_fonts';
+import vfs from "./vfs";
+import getPdfDef from "./pdf_def";
+import QRCode from "qrcode";
+
+pdfMake.vfs = vfs;
 
 var trackerCapture = angular.module('trackerCapture');
 trackerCapture.controller('VaccinationController',
@@ -64,6 +71,7 @@ trackerCapture.controller('VaccinationController',
             eligibility: true
         };
 
+        $scope.qrImage = "";
 
         $scope.attrMap = {};
         $scope.dosesMap = {
@@ -76,6 +84,17 @@ trackerCapture.controller('VaccinationController',
                 $scope.attrMap[att.id] = att;
             }
         });
+
+        function setUrls(urls) {
+            $scope.certificate.url1 = urls.url1;
+            $scope.certificate.url2 = urls.url2;
+            QRCode.toDataURL(urls.url1)
+                .then(data => {
+                    $scope.qrImage = data;
+                }).catch(err => {
+                    console.error("Error in generating QR", err);
+                });
+        }
 
         $scope.$on('dashboardWidgets', function () {
             $scope.selectedEnrollment = null;
@@ -107,16 +126,13 @@ trackerCapture.controller('VaccinationController',
                         $scope.dosesMap[ev.programStage].given = eventData["sEgbpR5sGP6"] || eventData["N9h0aYEaS0i"];
                         $scope.dosesMap[ev.programStage].batch = eventData["T8o6oTkS2OH"];
                         $scope.dosesMap[ev.programStage].type = eventData["J1HZdZNWqMb"] || eventData["R50Qdvrf768"];
-                        $scope.dosesMap[ev.programStage].ou = ev.orgUnitName;
+                        $scope.dosesMap[ev.programStage].place = ev.orgUnitName;
                     }
                 });
             }
 
             // query for existing cert
-            VaccineCertService.certReady($scope.certificate.teiId).then((urls) => {
-                $scope.certificate.url1 = urls.url1;
-                $scope.certificate.url2 = urls.url2;
-            }).catch(err => {
+            VaccineCertService.certReady($scope.certificate.teiId).then(setUrls).catch(err => {
                 console.warn("No certificate available in server side");
             }).finally(() => {
                 console.log("Finally....")
@@ -148,21 +164,35 @@ trackerCapture.controller('VaccinationController',
             console.log("Issuing certificate...");
             $scope.loading.issue = true;
 
-            // generate reports here
-            let pdf1 = ""
-            let pdf2 = ""
+            console.log("Name", $scope.certificate.name.value);
 
-            VaccineCertService.persist($scope.certificate.teiId, pdf1, pdf2).then((urls) => {
-                console.log("Certificate issued...", urls);
-                $scope.certificate.url1 = urls.url1;
-                $scope.certificate.url2 = urls.url2;
-                $scope.$apply(function () {
-                    $scope.loading.issue = false;
-                });
-            }).catch(err => {
-                console.warn("Error occurred when issuing the certificate", err);
-                $scope.$apply(function () {
-                    $scope.loading.issue = false;
+            // generate reports here
+            const pdfDocGenerator = pdfMake.createPdf(getPdfDef(
+                $scope.certificate.vaccinationNumber.value,
+                $scope.certificate.name.value,
+                $scope.certificate.gender.value,
+                $scope.certificate.age.value,
+                $scope.certificate.address.value,
+                $scope.certificate.nic.value,
+                $scope.certificate.doses.dose1,
+                $scope.certificate.doses.dose2
+            ));
+
+            pdfDocGenerator.getBase64((data) => {
+                let pdf1 = data;
+                let pdf2 = data;
+
+                VaccineCertService.persist($scope.certificate.teiId, pdf1, pdf2).then((urls) => {
+                    console.log("Certificate issued...", urls);
+                    setUrls(urls);
+                    $scope.$apply(function () {
+                        $scope.loading.issue = false;
+                    });
+                }).catch(err => {
+                    console.warn("Error occurred when issuing the certificate", err);
+                    $scope.$apply(function () {
+                        $scope.loading.issue = false;
+                    });
                 });
             });
         }
