@@ -47,6 +47,17 @@ trackerCapture.controller('VaccinationController',
                 id: "tJz1lz2sGrl",
                 required: true
             },
+            phone: {
+                id: "eYViMjtiWRA",
+            },
+            doses: {
+                dose1: {
+                    id: "fZ3diyIwzDF"
+                },
+                dose2: {
+                    id: "fZ3diyIwzDF"
+                },
+            },
             teiId: undefined,
             url1: undefined,
             url2: undefined,
@@ -55,6 +66,10 @@ trackerCapture.controller('VaccinationController',
 
 
         $scope.attrMap = {};
+        $scope.dosesMap = {
+            "fZ3diyIwzDF": $scope.certificate.doses.dose1,
+            "fxIEVGCv63j": $scope.certificate.doses.dose2,
+        };
 
         Object.values($scope.certificate).forEach(att => {
             if (att && att.id) {
@@ -78,6 +93,25 @@ trackerCapture.controller('VaccinationController',
                 });
             }
 
+            let enrollment = selections.enrollments.find(e => e.program === "aLZQ5fSVdQc");
+
+            if (enrollment && enrollment.events) {
+                enrollment.events.forEach(ev => {
+                    let eventData = {};
+                    ev.dataValues.forEach(dv => {
+                        eventData[dv.dataElement] = dv.value;
+                    });
+
+                    if ($scope.dosesMap[ev.programStage]) {
+                        $scope.dosesMap[ev.programStage].date = eventData["HLnrx4pz8H1"];
+                        $scope.dosesMap[ev.programStage].given = eventData["sEgbpR5sGP6"] || eventData["N9h0aYEaS0i"];
+                        $scope.dosesMap[ev.programStage].batch = eventData["T8o6oTkS2OH"];
+                        $scope.dosesMap[ev.programStage].type = eventData["J1HZdZNWqMb"] || eventData["R50Qdvrf768"];
+                        $scope.dosesMap[ev.programStage].ou = ev.orgUnitName;
+                    }
+                });
+            }
+
             // query for existing cert
             VaccineCertService.certReady($scope.certificate.teiId).then((urls) => {
                 $scope.certificate.url1 = urls.url1;
@@ -86,7 +120,7 @@ trackerCapture.controller('VaccinationController',
                 console.warn("No certificate available in server side");
             }).finally(() => {
                 console.log("Finally....")
-                $scope.$apply(function() {
+                $scope.$apply(function () {
                     $scope.loading.all = false;
                 });
             });
@@ -102,6 +136,8 @@ trackerCapture.controller('VaccinationController',
             if (!$scope.certificate.teiId) {
                 $scope.eligibility = false;
             }
+
+            console.log("Certificate", $scope.certificate);
         });
 
         $scope.sendSMS = function () {
@@ -120,12 +156,12 @@ trackerCapture.controller('VaccinationController',
                 console.log("Certificate issued...", urls);
                 $scope.certificate.url1 = urls.url1;
                 $scope.certificate.url2 = urls.url2;
-                $scope.$apply(function() {
+                $scope.$apply(function () {
                     $scope.loading.issue = false;
                 });
             }).catch(err => {
                 console.warn("Error occurred when issuing the certificate", err);
-                $scope.$apply(function() {
+                $scope.$apply(function () {
                     $scope.loading.issue = false;
                 });
             });

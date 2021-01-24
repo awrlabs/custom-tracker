@@ -47,7 +47,7 @@
                         {{'view_cert2'| translate}}
                     </a>
 
-                    <button type="button" class="btn btn-primary" ng-click="sendSMS()" ng-if="certificate.url1">
+                    <button type="button" class="btn btn-primary" ng-click="sendSMS()" ng-if="certificate.url1 && certificate.phone.value">
                         <i class="fa fa-commenting-o"></i>
                         {{'send_cert_sms'| translate}}
                     </button>
