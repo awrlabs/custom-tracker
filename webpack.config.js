@@ -17,6 +17,7 @@ try {
     console.info('Using default config');
     dhisConfig = {
         baseUrl: 'http://135.181.131.10/test1/',
+        certUrl: 'http://localhost:8080/',
         authorization: 'Basic Y2hhdGh1cmE6VGVzdDEyMzQu' // admin:district
     };
 }
@@ -108,6 +109,7 @@ module.exports = {
                 { path: '/icons/**', target: dhisConfig.baseUrl, bypass:bypass },
                 { path: '/images/**', target: dhisConfig.baseUrl, bypass:bypass },
                 { path: '/main.js', target: dhisConfig.baseUrl, bypass:bypass },
+                { path: '/cert/**', target: dhisConfig.certUrl, bypass:bypass },
         ],
     },
 };

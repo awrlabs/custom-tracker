@@ -14,14 +14,17 @@
         </span>
     </div>
     <div ng-show="vaccinationWidget.expand" class="panel-body dashboard-widget-container">
-        
+
         <!-- notes section begins -->
-        <div>
+        <div ng-if="loading.all">
+            <img src="../images/ajax-loader-bar.gif" />
+        </div>
+        <div ng-if="!loading.all">
             {{eligibility}}
             <div ng-show="!certificate.eligibility" class="alert alert-danger">
                 <p>Not eligible to issue a ceriticate.</p>
                 <ul>
-                    
+
                 </ul>
             </div>
             <div ng-show="certificate.eligibility" class="remove-default-padding">
@@ -32,20 +35,30 @@
                     </button>
                 </div>
                 <div class="add-default-padding" ng-if="certificate.url1">
-                    <input type="text" ng-model="certificate.url" class="form-control" disabled />
-                    <button type="button" class="btn btn-primary" ng-click="viewCert2()">
-                        <i class="fa fa-certificate "></i>
+                    <input type="text" ng-model="certificate.url1" class="form-control" disabled />
+                    <a type="button" class="btn btn-primary" ng-if="certificate.url1" ng-href="{{certificate.url1}}"
+                        target="_blank">
+                        <i class="fa fa-download"></i>
                         {{'view_cert1'| translate}}
-                    </button>
-                    <button type="button" class="btn btn-primary" ng-click="viewCert1()">
-                        <i class="fa fa-certificate "></i>
+                    </a>
+                    <a type="button" class="btn btn-primary" ng-if="certificate.url2" ng-href="{{certificate.url2}}"
+                        target="_blank">
+                        <i class="fa fa-download"></i>
                         {{'view_cert2'| translate}}
-                    </button>
+                    </a>
 
-                    <button type="button" class="btn btn-primary" ng-click="sendSMS()">
+                    <button type="button" class="btn btn-primary" ng-click="sendSMS()" ng-if="certificate.url1">
                         <i class="fa fa-commenting-o"></i>
                         {{'send_cert_sms'| translate}}
                     </button>
+
+                    <button type="button" class="btn btn-primary" ng-click="issue()" ng-if="certificate.url1"
+                        ng-disabled="issueInProgress">
+                        <i class="fa fa-certificate"></i>
+                        {{'re_issue_cert'| translate}}
+                        <img src="../images/ajax-loader-bar.gif" ng-if="loading.issue" />
+                    </button>
+
                 </div>
             </div>
 

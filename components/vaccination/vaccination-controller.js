@@ -20,6 +20,11 @@ trackerCapture.controller('VaccinationController',
 
         var today = DateUtils.getToday();
 
+        $scope.loading = {
+            issue: false,
+            all: true
+        };
+
         $scope.certificate = {
             vaccinationNumber: {
                 id: "pXK6VZwj00d",
@@ -48,7 +53,6 @@ trackerCapture.controller('VaccinationController',
             eligibility: true
         };
 
-        $scope.issueInProgress = false;
 
         $scope.attrMap = {};
 
@@ -75,11 +79,16 @@ trackerCapture.controller('VaccinationController',
             }
 
             // query for existing cert
-            VaccineCertService.certReady($scope.certificate.teiId).then((certUrl1, certUrl2) => {
-                $scope.certificate.url1 = certUrl1;
-                $scope.certificate.url2 = certUrl2;
+            VaccineCertService.certReady($scope.certificate.teiId).then((urls) => {
+                $scope.certificate.url1 = urls.url1;
+                $scope.certificate.url2 = urls.url2;
             }).catch(err => {
                 console.warn("No certificate available in server side");
+            }).finally(() => {
+                console.log("Finally....")
+                $scope.$apply(function() {
+                    $scope.loading.all = false;
+                });
             });
 
             // determine eligibility
@@ -90,7 +99,7 @@ trackerCapture.controller('VaccinationController',
                 }
             });
 
-            if(!$scope.certificate.teiId){
+            if (!$scope.certificate.teiId) {
                 $scope.eligibility = false;
             }
         });
@@ -101,14 +110,24 @@ trackerCapture.controller('VaccinationController',
 
         $scope.issue = function () {
             console.log("Issuing certificate...");
-            $scope.issueInProgress = true;
-            VaccineCertService.persist($scope.certificate.teiId, "", "").then((certUrl1, certUrl2) => {
-                $scope.certificate.url1 = certUrl1;
-                $scope.certificate.url2 = certUrl2;
+            $scope.loading.issue = true;
+
+            // generate reports here
+            let pdf1 = ""
+            let pdf2 = ""
+
+            VaccineCertService.persist($scope.certificate.teiId, pdf1, pdf2).then((urls) => {
+                console.log("Certificate issued...", urls);
+                $scope.certificate.url1 = urls.url1;
+                $scope.certificate.url2 = urls.url2;
+                $scope.$apply(function() {
+                    $scope.loading.issue = false;
+                });
             }).catch(err => {
                 console.warn("Error occurred when issuing the certificate", err);
-            }).finally(() => {
-                $scope.issueInProgress = false;
+                $scope.$apply(function() {
+                    $scope.loading.issue = false;
+                });
             });
         }
     });
