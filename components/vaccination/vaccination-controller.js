@@ -90,7 +90,9 @@ trackerCapture.controller('VaccinationController',
             $scope.certificate.url2 = urls.url2;
             QRCode.toDataURL(urls.url1)
                 .then(data => {
-                    $scope.qrImage = data;
+                    $scope.$apply(function () {
+                        $scope.qrImage = data;
+                    });
                 }).catch(err => {
                     console.error("Error in generating QR", err);
                 });
@@ -167,7 +169,7 @@ trackerCapture.controller('VaccinationController',
             console.log("Name", $scope.certificate.name.value);
 
             // generate reports here
-            const pdfDocGenerator = pdfMake.createPdf(getPdfDef(
+            let pdfDefs = getPdfDef(
                 $scope.certificate.vaccinationNumber.value,
                 $scope.certificate.name.value,
                 $scope.certificate.gender.value,
@@ -176,22 +178,24 @@ trackerCapture.controller('VaccinationController',
                 $scope.certificate.nic.value,
                 $scope.certificate.doses.dose1,
                 $scope.certificate.doses.dose2
-            ));
+            );
 
-            pdfDocGenerator.getBase64((data) => {
-                let pdf1 = data;
-                let pdf2 = data;
+            const pdfColorDocGenerator = pdfMake.createPdf(pdfDefs[0]);
+            const pdfTextDocGenerator = pdfMake.createPdf(pdfDefs[1]);
 
-                VaccineCertService.persist($scope.certificate.teiId, pdf1, pdf2).then((urls) => {
-                    console.log("Certificate issued...", urls);
-                    setUrls(urls);
-                    $scope.$apply(function () {
-                        $scope.loading.issue = false;
-                    });
-                }).catch(err => {
-                    console.warn("Error occurred when issuing the certificate", err);
-                    $scope.$apply(function () {
-                        $scope.loading.issue = false;
+            pdfColorDocGenerator.getBase64((pdf1) => {
+                pdfTextDocGenerator.getBase64((pdf2) => {
+                    VaccineCertService.persist($scope.certificate.teiId, pdf1, pdf2).then((urls) => {
+                        console.log("Certificate issued...", urls);
+                        setUrls(urls);
+                        $scope.$apply(function () {
+                            $scope.loading.issue = false;
+                        });
+                    }).catch(err => {
+                        console.warn("Error occurred when issuing the certificate", err);
+                        $scope.$apply(function () {
+                            $scope.loading.issue = false;
+                        });
                     });
                 });
             });
