@@ -371,8 +371,8 @@ trackerCapture.controller('RegistrationController',
                 
                 if(!$scope.selectedProgram){
                     $scope.attributes = TEIGridService.generateGridColumns(atts, null, false).columns;
+                    fetchGeneratedAttributes();
                 }
-                fetchGeneratedAttributes();
             });
         }
 
