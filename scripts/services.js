@@ -3377,7 +3377,7 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
             });
         }
     })
-    .service('VaccineCertService', function ($http, VacCertURL) {
+    .service('VaccineCertService', function ($http, VacCertURL, DHIS2URL) {
         this.certReady = function (teiId) {
             return new Promise((accept, reject) => {
                 console.log("Sending ready check...");
@@ -3393,6 +3393,20 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
                 }, (err) => {
                     reject(err);
                 });
+            });
+        }
+
+        this.sendSms = function (to, msg) {
+            return $http({
+                method: 'POST',
+                url: DHIS2URL + "/sms/outbound",
+                data: {
+                    "message": msg,
+                    "recipients": [
+                        to
+                    ]
+                },
+                headers: { 'Content-Type': 'application/json' }
             });
         }
 

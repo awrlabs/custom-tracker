@@ -1,9 +1,9 @@
 /* global trackerCapture, angular */
 
-import qrcode from 'qrcode-generator';
-import ngQrcode from 'angular-qrcode';
+
 import pdfMake from 'pdfmake/build/pdfmake';
 import pdfFonts from 'pdfmake/build/vfs_fonts';
+import toastr from "toastr";
 import vfs from "./vfs";
 import getPdfDef from "./pdf_def";
 import QRCode from "qrcode";
@@ -159,7 +159,12 @@ trackerCapture.controller('VaccinationController',
         });
 
         $scope.sendSMS = function () {
-
+            VaccineCertService.sendSms($scope.certificate.phone.value, $scope.certificate.url1).then(rsp => {
+                console.log("SMS sent", rsp);
+            }).catch(err => {
+                console.error("Error in sending sms", err);
+                toastr.error(err.data.message, "Failed to send the message");
+            });
         }
 
         $scope.issue = function () {
