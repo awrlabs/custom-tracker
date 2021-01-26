@@ -1,12 +1,8 @@
 /* global trackerCapture, angular */
 
 
-import pdfMake from 'pdfmake/build/pdfmake';
-import pdfFonts from 'pdfmake/build/vfs_fonts';
-import toastr from "toastr";
 import vfs from "./vfs";
 import getPdfDef from "./pdf_def";
-import QRCode from "qrcode";
 
 pdfMake.vfs = vfs;
 
