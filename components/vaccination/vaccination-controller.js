@@ -69,6 +69,9 @@ trackerCapture.controller('VaccinationController',
 
         $scope.qrImage = "";
 
+        $scope.reissueSuggestion = false;
+        $scope.reissueSuggestionTimeout = false;
+
         $scope.attrMap = {};
         $scope.dosesMap = {
             "fZ3diyIwzDF": $scope.certificate.doses.dose1,
@@ -94,7 +97,8 @@ trackerCapture.controller('VaccinationController',
                 });
         }
 
-        $scope.$on('dashboardWidgets', function () {
+        function updateData(suggestReissue = false) {
+            console.log("Updating data...");
             $scope.selectedEnrollment = null;
             var selections = CurrentSelection.get();
             $scope.selectedTei = selections.tei;
@@ -136,6 +140,7 @@ trackerCapture.controller('VaccinationController',
                 console.log("Finally....")
                 $scope.$apply(function () {
                     $scope.loading.all = false;
+                    //$scope.reissueSuggestion = suggestReissue;
                 });
             });
 
@@ -152,6 +157,38 @@ trackerCapture.controller('VaccinationController',
             }
 
             console.log("Certificate", $scope.certificate);
+        };
+
+        
+
+        $scope.$on('enrollmentEditing', function (event, args) {
+            console.log("enrollment edited")
+            updateData(true);
+        });
+
+        $scope.$on('teiupdated', function () {
+            console.log("TEI updated");
+            updateData(true);
+        });
+
+        $scope.$on('dashboardWidgets', function () {
+            updateData();
+        });
+
+        $scope.$on('eventcreated', function (event, args) {
+            console.log("Event created");
+            updateData(true);
+        });
+
+
+        $scope.$on('dataEntryEventChanged', function (event, args) {
+            console.log("Event changed");
+            updateData(true);
+        });
+
+        $scope.$on('dataEntryControllerData', function (event, args) {
+            console.log("data changed");
+            updateData(true);
         });
 
         $scope.sendSMS = function () {
@@ -188,14 +225,18 @@ trackerCapture.controller('VaccinationController',
                 pdfTextDocGenerator.getBase64((pdf2) => {
                     VaccineCertService.persist($scope.certificate.teiId, pdf1, pdf2).then((urls) => {
                         console.log("Certificate issued...", urls);
+                        toastr.success("Certificate Issued");
                         setUrls(urls);
                         $scope.$apply(function () {
                             $scope.loading.issue = false;
+                            $scope.reissueSuggestion = false;
                         });
                     }).catch(err => {
                         console.warn("Error occurred when issuing the certificate", err);
+                        toastr.error(err, "Couldn't issue the certificate");
                         $scope.$apply(function () {
                             $scope.loading.issue = false;
+                            $scope.reissueSuggestion = false;
                         });
                     });
                 });

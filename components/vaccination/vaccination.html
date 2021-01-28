@@ -23,9 +23,9 @@
         <div ng-if="!loading.all">
             <div ng-show="!certificate.eligibility" class="alert alert-danger">
                 <p>Not eligible to issue a ceriticate.</p>
-                <ul>
-
-                </ul>
+            </div>
+            <div ng-show="certificate.url1 && reissueSuggestion" class="alert alert-danger">
+                <p>This certificate might no longer be valid. Please consider reissuing.</p>
             </div>
             <div ng-show="certificate.eligibility" class="remove-default-padding">
                 <div class="add-default-padding" ng-if="certificate.url1===undefined">

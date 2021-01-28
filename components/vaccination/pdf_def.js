@@ -10,7 +10,8 @@ function getColorDef(certNo, name, gender, age, address, nic, dose1, dose2) {
         images: {
             // Replace urls with saved resource or user uploaded assets
             logo: 'https://i.imgur.com/pRgwLtx.png',
-            bg: 'https://i.imgur.com/CnXLb3l.jpg',
+            bg: 'https://i.imgur.com/DTdqVHj.jpg',
+            // bg: 'https://i.imgur.com/CnXLb3l.jpg',
         },
         header: {
             columns: [
@@ -249,7 +250,7 @@ function getColorDef(certNo, name, gender, age, address, nic, dose1, dose2) {
 
                             'Date of issue\n',
 
-                            'Place of issue'
+                            // 'Place of issue'
 
                         ]
 
@@ -261,17 +262,16 @@ function getColorDef(certNo, name, gender, age, address, nic, dose1, dose2) {
 
                         alignment: 'center',
 
-                        text: ':\n:'
+                        text: ':'
 
                     },
 
                     {
 
                         width: '*',
-
+                        color:"transparent",
                         text: [
-                            new Date().toISOString().substring(0, 10) + '\n',
-                            'National Hospital of Sri Lanka'
+                            new Date().toISOString().substring(0, 10)
                         ]
 
                     }
@@ -591,9 +591,9 @@ function getTextDef(certNo, name, gender, age, address, nic, dose1, dose2) {
 
                         text: [
 
-                            'Date of issue\n',
+                            'Date of issue',
 
-                            'Place of issue'
+                            // 'Place of issue'
 
                         ]
 
@@ -607,15 +607,15 @@ function getTextDef(certNo, name, gender, age, address, nic, dose1, dose2) {
 
                         text: '\n'
 
-                    },
+                    }
+                    ,
 
                     {
 
                         width: '*',
-
+                        color:"transparent",
                         text: [
-                            new Date().toISOString().substring(0, 10) + '\n',
-                            'National Hospital of Sri Lanka'
+                            new Date().toISOString().substring(0, 10) 
                         ]
 
                     }
