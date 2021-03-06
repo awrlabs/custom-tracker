@@ -1097,6 +1097,19 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
                     return 0;
                 });
             },
+            customSearch: function (nic) {
+                var deferred = $q.defer();
+                var url = DHIS2URL + '/custom/tei/' + nic;
+                //var url = 'http://localhost:1337/localhost:7080/cert/tei/' + nic;
+                $http.get(url).then(function (response) {
+                    console.log("Response", response);
+                    deferred.resolve(response);
+                }, function (error) {
+                    deferred.reject(error);
+                    console.log("Error", error);
+                });
+                return deferred.promise;
+            },
             search: function (ouId, ouMode, queryUrl, programOrTETUrl, attributeUrl, pager, paging, format, attributesList, attrNamesIdMap, optionSets) {
                 var deferred = $q.defer();
                 var url = getSearchUrl("query", ouId, ouMode, queryUrl, programOrTETUrl, attributeUrl, pager, paging, format);
@@ -3384,8 +3397,8 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
                 $http.get(VacCertURL + "exists/" + teiId).then((resp) => {
                     if (resp.status === 200) {
                         accept({
-                            url1: VacCertURL + teiId + ".pdf",
-                            url2: VacCertURL + teiId + "-text.pdf"
+                            url1: new URL(location.origin + location.pathname + "/../" + VacCertURL + uid + ".pdf").href,
+                            url2: new URL(location.origin + location.pathname + "/../" + VacCertURL + uid + "-text.pdf").href
                         });
                     } else {
                         reject(resp);
@@ -3420,8 +3433,8 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
                 }).then(function (resp) {
                     if (resp.status === 202) {
                         accept({
-                            url1: VacCertURL + uid + ".pdf",
-                            url2: VacCertURL + uid + "-text.pdf"
+                            url1: new URL(location.origin + location.pathname + "/../" + VacCertURL + uid + ".pdf").href,
+                            url2: new URL(location.origin + location.pathname + "/../" + VacCertURL + uid + "-text.pdf").href
                         });
                     } else {
                         reject(resp);

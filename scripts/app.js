@@ -75,7 +75,7 @@ import 'leaflet-contextmenu/dist/leaflet.contextmenu.css';
 angular.module('trackerCapture')
 
 .value('DHIS2URL', '../api')
-.value('VacCertURL', location.origin + "/cert/")
+.value('VacCertURL', "../api/custom/cert/")
 
 .value('DHIS2COORDINATESIZE', 6)
 

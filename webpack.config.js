@@ -16,9 +16,9 @@ try {
     console.warn('\nWARNING! Failed to load DHIS config:', e.message);
     console.info('Using default config');
     dhisConfig = {
-        baseUrl: 'http://135.181.131.10/test1/',
+        baseUrl: 'https://covid-19.health.gov.lk/test2/',
         certUrl: 'http://localhost:8080/',
-        authorization: 'Basic Y2hhdGh1cmE6VGVzdDEyMzQu' // admin:district
+        authorization: process.env.DHIS_AUTH // admin:district
     };
 }
 console.log(JSON.stringify(dhisConfig, null, 2), '\n');
@@ -100,16 +100,16 @@ module.exports = {
         inline: false,
         compress: false,
         proxy: [
-                { path: '/api/**', target: dhisConfig.baseUrl, bypass:bypass },
-                { path: '/dhis/dhis-web-commons/**', target: dhisConfig.baseUrl, bypass:bypass},
-                { path: '/dhis-web-commons-ajax-json/**', target: dhisConfig.baseUrl, bypass:bypass },
-                { path: '/dhis-web-commons-stream/**', target: dhisConfig.baseUrl, bypass:bypass },
-                { path: '/dhis-web-commons/***', target: dhisConfig.baseUrl, bypass:bypass, proxyTimeout: 1000 * 60 * 5 },
-                { path: '/dhis-web-core-resource/**', target: dhisConfig.baseUrl, bypass:bypass },
-                { path: '/icons/**', target: dhisConfig.baseUrl, bypass:bypass },
-                { path: '/images/**', target: dhisConfig.baseUrl, bypass:bypass },
-                { path: '/main.js', target: dhisConfig.baseUrl, bypass:bypass },
-                { path: '/cert/**', target: dhisConfig.certUrl, bypass:bypass },
+                { path: '/api/**', target: dhisConfig.baseUrl, bypass:bypass, secure: false,changeOrigin: true },
+                { path: '/dhis/dhis-web-commons/**', target: dhisConfig.baseUrl, bypass:bypass, secure: false,changeOrigin: true},
+                { path: '/dhis-web-commons-ajax-json/**', target: dhisConfig.baseUrl, bypass:bypass , secure: false,changeOrigin: true},
+                { path: '/dhis-web-commons-stream/**', target: dhisConfig.baseUrl, bypass:bypass , secure: false,changeOrigin: true},
+                { path: '/dhis-web-commons/***', target: dhisConfig.baseUrl, bypass:bypass, proxyTimeout: 1000 * 60 * 5, secure: false,changeOrigin: true },
+                { path: '/dhis-web-core-resource/**', target: dhisConfig.baseUrl, bypass:bypass, secure: false,changeOrigin: true },
+                { path: '/icons/**', target: dhisConfig.baseUrl, bypass:bypass, secure: false,changeOrigin: true },
+                { path: '/images/**', target: dhisConfig.baseUrl, bypass:bypass , secure: false,changeOrigin: true},
+                { path: '/main.js', target: dhisConfig.baseUrl, bypass:bypass, secure: false,changeOrigin: true },
+                { path: '/cert/**', target: dhisConfig.certUrl, bypass:bypass, secure: false,changeOrigin: true },
         ],
     },
 };
