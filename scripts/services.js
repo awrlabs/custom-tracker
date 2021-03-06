@@ -500,7 +500,8 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
                         TCStorageService.currentStore.getAll('programs').done(function (prs) {
                             var programs = [];
                             angular.forEach(prs, function (pr) {
-                                if (pr.organisationUnits.hasOwnProperty(ou.id) && accesses.programsById[pr.id] && accesses.programsById[pr.id].data.read) {
+                                if ((loadSelectedProgram && selectedProgram && pr.id == selectedProgram.id) ||
+                                    (pr.organisationUnits.hasOwnProperty(ou.id) && accesses.programsById[pr.id] && accesses.programsById[pr.id].data.read)) {
                                     if (pr.programTrackedEntityAttributes) {
                                         pr.programTrackedEntityAttributes = pr.programTrackedEntityAttributes.filter(function (attr) {
                                             return attr.access && attr.access.read;
@@ -688,13 +689,49 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
                     return null;
                 });
             },
-            getByEntity: function (entity) {
-                var promise = $http.get(DHIS2URL + '/enrollments.json?ouMode=ACCESSIBLE&trackedEntityInstance=' + entity + '&fields=:all&paging=false').then(function (response) {
+            getByStartAndEndDate: function (program, orgUnit, ouMode, startDate, endDate) {
+                var promise = $http.get(DHIS2URL + '/enrollments.json?program=' + program + '&ou=' + orgUnit + '&ouMode=' + ouMode + '&startDate=' + startDate + '&endDate=' + endDate + '&fields=:all&paging=false').then(function (response) {
                     return convertFromApiToUser(response.data);
                 }, function (response) {
                     var errorBody = $translate.instant('failed_to_fetch_enrollment');
                     NotificationService.showNotifcationDialog(errorHeader, errorBody, response);
                     return null;
+                });
+                return promise;
+            },
+            enroll: function (enrollment) {
+                var en = convertFromUserToApi(angular.copy(enrollment));
+                var promise = TeiAccessApiService.post(enrollment.trackedEntityInstance, enrollment.program, DHIS2URL + '/enrollments', en).then(function (response) {
+                    return response.data;
+                }, function (response) {
+                    var errorBody = $translate.instant('failed_to_save_enrollment');
+                    NotificationService.showNotifcationDialog(errorHeader, errorBody, response);
+                    return null;
+                });
+                return promise;
+            },
+            update: function (enrollment) {
+                var en = convertFromUserToApi(angular.copy(enrollment));
+                delete en.notes;
+                var promise = TeiAccessApiService.put(enrollment.trackedEntityInstance, enrollment.program, DHIS2URL + '/enrollments/' + en.enrollment, en).then(function (response) {
+                    return response.data;
+                }, function (response) {
+                    var errorBody = $translate.instant('failed_to_update_enrollment');
+                    NotificationService.showNotifcationDialog(errorHeader, errorBody, response);
+                    return null;
+                });
+                return promise;
+            },
+            delete: function (enrollment) {
+                var promise = TeiAccessApiService.delete(enrollment.trackedEntityInstance, enrollment.program, DHIS2URL + '/enrollments/' + enrollment.enrollment).then(function (response) {
+                    return response.data;
+                }, function (response) {
+                    if (response && response.data && response.data.status === 'ERROR') {
+                        var errorBody = $translate.instant('failed_to_delete_enrollment');
+                        NotificationService.showNotifcationDialog(errorHeader, errorBody, response);
+                    }
+
+                    return response.data;
                 });
                 return promise;
             },
@@ -1044,6 +1081,97 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
                 });
                 return promise;
             },
+            saveRelationship: function (relationship) {
+                var promise = $http.post(DHIS2URL + '/relationships', relationship).then(function (response) {
+                    return response.data;
+                });
+                return promise;
+            },
+            getPotentialDuplicates: function (uidList) {
+                var uidUrl = "";
+                if (uidList.length > 0) {
+                    uidUrl += "?teis=";
+                    for (var i = 0; i < uidList.length; i++) {
+                        if (i > 0) uidUrl += ",";
+                        uidUrl += uidList[i];
+                    }
+                }
+                var promise = $http.get(DHIS2URL + '/potentialDuplicates' + uidUrl).then(function (response) {
+                    return response.data;
+                });
+                return promise;
+            },
+            getPotentialDuplicatesForTei: function (uid) {
+                var promise = $http.get(DHIS2URL + '/potentialDuplicates?teis=' + uid).then(function (response) {
+                    return response.data;
+                });
+                return promise;
+            },
+            markPotentialDuplicate: function (tei) {
+                var promise = $http.post(DHIS2URL + '/potentialDuplicates/', { teiA: tei.id }).then(function (response) {
+                    return response.data;
+                });
+                return promise;
+            },
+            deletePotentialDuplicate: function (duplicate) {
+                var promise = $http.delete(DHIS2URL + '/potentialDuplicates/' + duplicate.id).then(function (response) {
+                    return response.data;
+                });
+                return promise;
+            },
+            delete: function (entityUid) {
+                var promise = $http.delete(DHIS2URL + '/trackedEntityInstances/' + entityUid).then(function (response) {
+                    return response.data;
+                }, function (response) {
+                    var errorBody;
+                    if (response && response.data && response.data.status === 'ERROR') {
+                        errorBody = $translate.instant('delete_error_audit');
+                        NotificationService.showNotifcationDialog(errorHeader, errorBody, response);
+                    }
+
+                    cachedTeiWithProgramData = {
+                        entityUid: entityUid,
+                        programUid: programUid,
+                        data: tei
+                    }
+
+                    return tei;
+                }, function (error) {
+                    var def = $q.defer();
+                    def.reject(error);
+                    return def.promise;
+                });
+            },
+            get: function (entityUid, optionSets, attributesById) {
+                var promise = $http.get(DHIS2URL + '/trackedEntityInstances/' + entityUid + '.json').then(function (response) {
+                    var tei = response.data;
+                    setTeiAttributeValues(tei.attributes, optionSets, attributesById);
+                    return tei;
+
+                }, function (error) {
+                    if (error) {
+                        var headerText = errorHeader;
+                        var bodyText = $translate.instant('access_denied');
+
+                        if (error.statusText) {
+                            headerText = error.statusText;
+                        }
+                        if (error.data && error.data.message) {
+                            bodyText = error.data.message;
+                        }
+                        NotificationService.showNotifcationDialog(headerText, bodyText);
+                    }
+                });
+
+                return promise;
+            },
+            getRelationships: function (uid) {
+                var promise = $http.get(DHIS2URL + '/trackedEntityInstances/' + uid + '.json?fields=relationships').then(function (response) {
+                    var tei = response.data;
+                    return tei.relationships;
+                });
+                return promise;
+            },
             getPotentialDuplicates: function (uidList) {
                 var uidUrl = "";
                 if (uidList.length > 0) {
@@ -1298,8 +1426,9 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
 
                         angular.forEach(program.programTrackedEntityAttributes, function (pAttribute) {
                             var att = attributes[pAttribute.trackedEntityAttribute.id];
-                            att.programTrackedEntityAttribute = pAttribute;
+
                             if (att) {
+                                att.programTrackedEntityAttribute = pAttribute;
                                 att.mandatory = pAttribute.mandatory;
                                 att.displayInListNoProgram = pAttribute.displayInList;
 
