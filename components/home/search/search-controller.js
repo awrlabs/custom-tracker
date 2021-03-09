@@ -148,11 +148,11 @@ trackerCapture.controller('SearchController', function (
 
     var doCustomSearch = function (searchGroup) {
         return new Promise((resolve, reject) => {
-            TEIService.customSearch(searchGroup["tJz1lz2sGrl"].value).then(function (res) {
+            TEIService.customSearch(searchGroup["tJz1lz2sGrl"].value.toLowerCase()).then(function (res) {
                 if (res.status && res.status === 200 && res.data) {
                     $scope.searching = null;
                     openTei({
-                        ou: res.data.ou,
+                        ou: $scope.selectedOrgUnit.id,//res.data.ou,
                         id: res.data.tei
                     });
                     resolve();
@@ -162,8 +162,8 @@ trackerCapture.controller('SearchController', function (
                     reject();
                 }
             }).catch(function (err) {
-                $scope.searching = null;
                 if (err.status && err.status === 460) {
+                    $scope.searching = null;
                     console.log("Couldn't find");
                     resolve();
                     return showResultModal({
