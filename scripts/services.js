@@ -3538,6 +3538,25 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
             });
         }
 
+        this.certReady2 = function (nic) {
+            return new Promise((accept, reject) => {
+                console.log("Sending ready check...");
+                $http.get(DHIS2URL + "/custom/cert/exists/" + nic).then((resp) => {
+                    console.log("cert ready returned", resp.status);
+                    if (resp.status === 200) {
+                        accept({
+                            url1: new URL(location.origin + location.pathname + "/../" + DHIS2URL + "/custom/cert/" + nic).href,
+                            url2: new URL(location.origin + location.pathname + "/../" + DHIS2URL + "/custom/cert/" + nic).href
+                        });
+                    } else {
+                        reject(resp);
+                    }
+                }, (err) => {
+                    reject(err);
+                });
+            });
+        }
+
         this.sendSms = function (to, msg) {
             return $http({
                 method: 'POST',
@@ -3552,11 +3571,29 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
             });
         }
 
+        this.generate = function(nic){
+            return new Promise((accept, reject) => {
+                $http.get(DHIS2URL+"/custom/cert/"+nic+"/generate").then(function (resp) {
+                    if (resp.status === 200) {
+                        accept({
+                            url1: new URL(location.origin + location.pathname + "/../" + DHIS2URL + "/custom/cert/" + nic).href,
+                            url2: new URL(location.origin + location.pathname + "/../" + DHIS2URL + "/custom/cert/" + nic).href
+                        });
+                    } else {
+                        reject(resp);
+                    }
+                }).catch(function (resp) {
+                    console.error("Failed persist", resp);
+                    reject(resp);
+                });
+            });
+        }
+
         this.persist = function (uid, pdf1, pdf2) {
             return new Promise((accept, reject) => {
                 $http({
                     method: 'POST',
-                    url: VacCertURL,
+                    url: DHIS2URL+"/custom/cert",
                     data: { uid, pdf1, pdf2 },
                     headers: { 'Content-Type': 'application/json' }
                 }).then(function (resp) {
