@@ -224,8 +224,8 @@ trackerCapture.controller('VaccinationController',
                 });
             }).catch(err => {
                 console.warn("Error occurred when issuing the certificate", err);
-                if (err.status && err.statu == 406) {
-                    toastr.error(err, "Not eligible for certification");
+                if (err.status && err.status == 406) {
+                    toastr.error(err, (err.data && err.data.message)?err.data.message:"Not eligible for certification");
                 } else {
                     toastr.error(err, "Couldn't issue the certificate");
                 }
