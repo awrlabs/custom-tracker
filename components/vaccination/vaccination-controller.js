@@ -110,6 +110,21 @@ trackerCapture.controller('VaccinationController',
 
             console.log("Selection", selections);
 
+            var productOptions = {};
+            var batchOptions = {};
+            if (selections.optionSets["m8kSC9Sl2mE"]) {
+                selections.optionSets["m8kSC9Sl2mE"].options.forEach(op => {
+                    productOptions[op.code] = op.displayName;
+                });
+            }
+
+            if (selections.optionSets["Sx0iIwAsj5S"]) {
+                selections.optionSets["Sx0iIwAsj5S"].options.forEach(op => {
+                    batchOptions[op.code] = op.displayName;
+                });
+            }
+
+
             if (selections && selections.tei) {
                 $scope.certificate.teiId = selections.tei.trackedEntityInstance;
                 selections.tei.attributes.forEach((att) => {
@@ -131,7 +146,8 @@ trackerCapture.controller('VaccinationController',
                     if ($scope.dosesMap[ev.programStage]) {
                         $scope.dosesMap[ev.programStage].date = eventData["HLnrx4pz8H1"];
                         $scope.dosesMap[ev.programStage].given = eventData["sEgbpR5sGP6"] || eventData["N9h0aYEaS0i"];
-                        $scope.dosesMap[ev.programStage].batch = eventData["T8o6oTkS2OH"];
+                        $scope.dosesMap[ev.programStage].batch = batchOptions[eventData["xv7LXLV8RLT"]] || batchOptions[eventData["T8o6oTkS2OH"]];
+                        $scope.dosesMap[ev.programStage].product = productOptions[eventData["R50Qdvrf768"]] || productOptions[eventData["J1HZdZNWqMb"]];
                         $scope.dosesMap[ev.programStage].type = eventData["J1HZdZNWqMb"] || eventData["R50Qdvrf768"];
                         $scope.dosesMap[ev.programStage].place = ev.orgUnitName;
                     }
@@ -211,65 +227,66 @@ trackerCapture.controller('VaccinationController',
         }
 
         $scope.issue = function () {
-            console.log("Issuing certificate...");
+            console.log("Issuing certificate...", $scope.certificate);
             $scope.loading.issue = true;
 
-            VaccineCertService.generate($scope.certificate.nic.value).then((urls) => {
-                console.log("Certificate issued...", urls);
-                toastr.success("Certificate Issued");
-                setUrls(urls);
-                $scope.$apply(function () {
-                    $scope.loading.issue = false;
-                    $scope.reissueSuggestion = false;
-                });
-            }).catch(err => {
-                console.warn("Error occurred when issuing the certificate", err);
-                if (err.status && err.status == 406) {
-                    toastr.error(err, (err.data && err.data.message)?err.data.message:"Not eligible for certification");
-                } else {
-                    toastr.error(err, "Couldn't issue the certificate");
-                }
+            // VaccineCertService.generate($scope.certificate.nic.value).then((urls) => {
+            //     console.log("Certificate issued...", urls);
+            //     toastr.success("Certificate Issued");
+            //     setUrls(urls);
+            //     $scope.$apply(function () {
+            //         $scope.loading.issue = false;
+            //         $scope.reissueSuggestion = false;
+            //     });
+            // }).catch(err => {
+            //     console.warn("Error occurred when issuing the certificate", err);
+            //     if (err.status && err.status == 406) {
+            //         toastr.error(err, (err.data && err.data.message)?err.data.message:"Not eligible for certification");
+            //     } else {
+            //         toastr.error(err, "Couldn't issue the certificate");
+            //     }
 
-                $scope.$apply(function () {
-                    $scope.loading.issue = false;
-                    $scope.reissueSuggestion = false;
-                });
-            });
-
-            // generate reports here
-            // let pdfDefs = getPdfDef(
-            //     $scope.certificate.vaccinationNumber.value,
-            //     $scope.certificate.name.value,
-            //     $scope.certificate.gender.value,
-            //     $scope.certificate.age.value,
-            //     $scope.certificate.address.value,
-            //     $scope.certificate.nic.value,
-            //     $scope.certificate.doses.dose1,
-            //     $scope.certificate.doses.dose2
-            // );
-
-            // const pdfColorDocGenerator = pdfMake.createPdf(pdfDefs[0]);
-            // const pdfTextDocGenerator = pdfMake.createPdf(pdfDefs[1]);
-
-            // pdfColorDocGenerator.getBase64((pdf1) => {
-            //     pdfTextDocGenerator.getBase64((pdf2) => {
-            //         VaccineCertService.persist($scope.certificate.teiId, pdf1, pdf2).then((urls) => {
-            //             console.log("Certificate issued...", urls);
-            //             toastr.success("Certificate Issued");
-            //             setUrls(urls);
-            //             $scope.$apply(function () {
-            //                 $scope.loading.issue = false;
-            //                 $scope.reissueSuggestion = false;
-            //             });
-            //         }).catch(err => {
-            //             console.warn("Error occurred when issuing the certificate", err);
-            //             toastr.error(err, "Couldn't issue the certificate");
-            //             $scope.$apply(function () {
-            //                 $scope.loading.issue = false;
-            //                 $scope.reissueSuggestion = false;
-            //             });
-            //         });
+            //     $scope.$apply(function () {
+            //         $scope.loading.issue = false;
+            //         $scope.reissueSuggestion = false;
             //     });
             // });
+
+            // generate reports here
+            let pdfDefs = getPdfDef(
+                $scope.certificate.vaccinationNumber.value,
+                $scope.certificate.name.value,
+                $scope.certificate.gender.value,
+                $scope.certificate.age.value,
+                $scope.certificate.address.value,
+                $scope.certificate.nic.value,
+                $scope.certificate.doses.dose1,
+                $scope.certificate.doses.dose2
+            );
+
+            const pdfColorDocGenerator = pdfMake.createPdf(pdfDefs[0]);
+            // const pdfTextDocGenerator = pdfMake.createPdf(pdfDefs[1]);
+
+            pdfColorDocGenerator.getBase64((pdf1) => {
+                console.log(pdf1);
+                // pdfTextDocGenerator.getBase64((pdf2) => {
+                //     VaccineCertService.persist($scope.certificate.teiId, pdf1, pdf2).then((urls) => {
+                //         console.log("Certificate issued...", urls);
+                //         toastr.success("Certificate Issued");
+                //         setUrls(urls);
+                //         $scope.$apply(function () {
+                //             $scope.loading.issue = false;
+                //             $scope.reissueSuggestion = false;
+                //         });
+                //     }).catch(err => {
+                //         console.warn("Error occurred when issuing the certificate", err);
+                //         toastr.error(err, "Couldn't issue the certificate");
+                //         $scope.$apply(function () {
+                //             $scope.loading.issue = false;
+                //             $scope.reissueSuggestion = false;
+                //         });
+                //     });
+                // });
+            });
         }
     });
