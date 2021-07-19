@@ -17,7 +17,8 @@ trackerCapture.controller('VaccinationController',
         NotificationService,
         SessionStorageService,
         orderByFilter,
-        UsersService) {
+        UsersService,
+        ModalService) {
         var userProfile = SessionStorageService.get('USER_PROFILE');
         var storedBy = userProfile && userProfile.userCredentials && userProfile.userCredentials.username ? userProfile.userCredentials.username : '';
 
@@ -134,6 +135,7 @@ trackerCapture.controller('VaccinationController',
                         $scope.dosesMap[ev.programStage].batch = eventData["T8o6oTkS2OH"];
                         $scope.dosesMap[ev.programStage].type = eventData["J1HZdZNWqMb"] || eventData["R50Qdvrf768"];
                         $scope.dosesMap[ev.programStage].place = ev.orgUnitName;
+                        $scope.dosesMap[ev.programStage].completed = ev.status == "COMPLETED";
                     }
                 });
             }
@@ -273,5 +275,19 @@ trackerCapture.controller('VaccinationController',
             //         });
             //     });
             // });
+        };
+
+        $scope.reissue = function (reissue) {
+            var modalOptions = {
+                closeButtonText: 'no',
+                actionButtonText: 'yes',
+                headerText: 'Confirm Your Action',
+                bodyText: 'Do you really want to reissue this certificate?'
+            };
+
+            ModalService.showModal({}, modalOptions).then(function (result) {
+                $scope.issue();
+            }, function () {
+            });
         }
     });

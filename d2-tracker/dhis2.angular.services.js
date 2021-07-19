@@ -98,7 +98,6 @@ var d2Services = angular.module('d2Services', ['ngResource'])
 
     return {
         getUserAuthorities: function (roles) {
-            console.log("ROLES",roles);
             var auth = getAuthorities(roles);
             var authority = {};
             var allAuth = auth['ALL'];

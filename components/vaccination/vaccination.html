@@ -60,7 +60,7 @@
                         SMS
                     </button>
 
-                    <button type="button" class="btn btn-primary" ng-click="issue()" ng-if="certificate.url1 && userAuthority.canIssueCertificates &&  userAuthority.canReIssueCertificates"
+                    <button type="button" class="btn btn-primary" ng-click="reissue()" ng-if="certificate.url1 && userAuthority.canIssueCertificates &&  userAuthority.canReIssueCertificates"
                         ng-disabled="issueInProgress">
                         <i class="fa fa-certificate"></i>
                         <!-- {{'re_issue_cert'| translate}} -->
