@@ -42,7 +42,7 @@
                 <div ng-class="topbarRightSizeClass" style="width:150px; display:flex;">
                     <button type="button"
                             ng-attr-title="{{model.stickyDisabled ? stickLabel : unstickLabel}}"
-                            ng-show="(dashboardWidgets | filter: {parent: 'smallerWidget', show: true}).length > 0"
+                            ng-show="(dashboardWidgets | filter: {parent: 'smallerWidget', show: true}).length > 0 && userAuthority.canAdministerDashboard"
                             class="btn btn-default dashboard-info-btn-right-size"
                             ng-class="{true: 'stick', false: 'unstick'} [!model.stickyDisabled]"
                             ng-click="model.stickyDisabled = !model.stickyDisabled"
@@ -50,7 +50,7 @@
                         <i class="fa fa-thumb-tack"></i>
                     </button>
                     
-                    <div class="btn-group trim" ng-if="showManageTeiDropdown()">
+                    <div class="btn-group trim" ng-if="showManageTeiDropdown() && userAuthority.canAdministerDashboard">
                         <button type="button" ng-attr-title="{{'manage' | translate}} {{trackedEntityType.displayName}}" class="btn btn-danger dropdown-toggle" ng-disabled="selectedOrgUnit.closedStatus" data-toggle="dropdown" style="height: 35px;">
                             <i class="fa fa-exclamation-circle"></i>
                         </button>
@@ -61,7 +61,7 @@
                     </div>
                     
                     <div class="btn-group trim">
-                        <button type="button" ng-attr-title="{{settingsLabel}}" class="btn btn-default dropdown-toggle" data-toggle="dropdown" style="height: 35px;">
+                        <button type="button" ng-if="userAuthority.canAdministerDashboard" ng-attr-title="{{settingsLabel}}" class="btn btn-default dropdown-toggle" data-toggle="dropdown" style="height: 35px;">
                             <i class="fa fa-cog"></i>
                         </button>
                         <ul class="dropdown-menu pull-right" role="menu">

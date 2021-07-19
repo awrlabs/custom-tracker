@@ -225,7 +225,9 @@ trackerCapture.controller('VaccinationController',
             }).catch(err => {
                 console.warn("Error occurred when issuing the certificate", err);
                 if (err.status && err.status == 406) {
-                    toastr.error(err, (err.data && err.data.message)?err.data.message:"Not eligible for certification");
+                    toastr.error(err, (err.data && err.data.message) ? err.data.message : "Not eligible for certification");
+                } else if (err.status && err.status == 401) {
+                    toastr.error(err, "You are not authoized to perform this action");
                 } else {
                     toastr.error(err, "Couldn't issue the certificate");
                 }

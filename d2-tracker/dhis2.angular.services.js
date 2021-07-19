@@ -1,6 +1,12 @@
 /* Pagination service */
 /* global angular, dhis2, moment */
 
+const CUSTOM_GROUPS = {
+    EDIT_DASHBOARD : "MK1AjP2qhnZ",
+    ISSUE_CERTIFICATE: "UqgVgpQvys0",
+    REISSUE_CERTIFICATE: "W5QBajVBJcK"
+};
+
 var d2Services = angular.module('d2Services', ['ngResource'])
 
 /* Factory for loading translation strings */
@@ -79,11 +85,20 @@ var d2Services = angular.module('d2Services', ['ngResource'])
                 });
             });
         }
+
+        // custom authorities
+        if(roles && roles.userGroups){
+            authority.groups = {};
+            angular.forEach(roles.userGroups, function (group) {
+                authority.groups[group.id] = true;
+            });
+        }
         return authority;
     };
 
     return {
         getUserAuthorities: function (roles) {
+            console.log("ROLES",roles);
             var auth = getAuthorities(roles);
             var authority = {};
             var allAuth = auth['ALL'];
@@ -93,7 +108,9 @@ var d2Services = angular.module('d2Services', ['ngResource'])
             authority.canCascadeDeleteEnrollment = auth['F_ENROLLMENT_CASCADE_DELETE'] || allAuth;
             authority.canReopenDataSet = auth['F_DATASET_REOPEN'] || allAuth;
             authority.canEditExpiredStuff = auth['F_EDIT_EXPIRED'] || allAuth;
-            authority.canAdministerDashboard = auth['F_PROGRAM_DASHBOARD_CONFIG_ADMIN'] || allAuth;
+            authority.canAdministerDashboard = (auth['F_PROGRAM_DASHBOARD_CONFIG_ADMIN'] || allAuth) && auth.groups[CUSTOM_GROUPS.EDIT_DASHBOARD];
+            authority.canIssueCertificates =  auth.groups[CUSTOM_GROUPS.ISSUE_CERTIFICATE];
+            authority.canReIssueCertificates =  auth.groups[CUSTOM_GROUPS.REISSUE_CERTIFICATE];
             authority.ignoreRequiredTrackerValueValidation = auth['F_IGNORE_TRACKER_REQUIRED_VALUE_VALIDATION'] || allAuth;
             return authority;
         }
