@@ -7,6 +7,14 @@ const CUSTOM_GROUPS = {
     REISSUE_CERTIFICATE: "W5QBajVBJcK"
 };
 
+
+// test2
+// const CUSTOM_GROUPS = {
+//     EDIT_DASHBOARD : "SiziwzLJtGF",
+//     ISSUE_CERTIFICATE: "KhaG6ehA5GI",
+//     REISSUE_CERTIFICATE: "Sq6Mw3LZnIR"
+// };
+
 var d2Services = angular.module('d2Services', ['ngResource'])
 
 /* Factory for loading translation strings */
@@ -86,9 +94,10 @@ var d2Services = angular.module('d2Services', ['ngResource'])
             });
         }
 
+        authority.groups = {};
+
         // custom authorities
         if(roles && roles.userGroups){
-            authority.groups = {};
             angular.forEach(roles.userGroups, function (group) {
                 authority.groups[group.id] = true;
             });
