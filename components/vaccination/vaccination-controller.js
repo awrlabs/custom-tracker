@@ -228,29 +228,43 @@ trackerCapture.controller('VaccinationController',
 
         $scope.issue = function () {
             console.log("Issuing certificate...", $scope.certificate);
+            // validating
+            if (!$scope.certificate.vaccinationNumber.value) {
+                toastr.error("Vaccination Number can't be empty");
+                return;
+            } else if (!$scope.certificate.name.value) {
+                toastr.error("Name can't be empty");
+                return;
+            } else if (!$scope.certificate.age.value) {
+                toastr.error("Age can't be empty");
+                return;
+            } else if (!$scope.certificate.address.value) {
+                toastr.error("Address can't be empty");
+                return;
+            } else if (!$scope.certificate.name.value) {
+                toastr.error("Identity number can't be empty");
+                return;
+            } else if (!$scope.certificate.doses.dose1.date) {
+                toastr.error("First dose not found");
+                return;
+            } else if (!$scope.certificate.doses.dose1.product) {
+                toastr.error("First dose product not found");
+                return;
+            } else if (!$scope.certificate.doses.dose1.batch) {
+                toastr.error("First dose batch not found");
+                return;
+            } else if (!$scope.certificate.doses.dose2.date) {
+                toastr.error("Second dose not found");
+                return;
+            } else if (!$scope.certificate.doses.dose2.product) {
+                toastr.error("Second dose product not found");
+                return;
+            } else if (!$scope.certificate.doses.dose2.batch) {
+                toastr.error("Second dose batch not found");
+                return;
+            }
+
             $scope.loading.issue = true;
-
-            // VaccineCertService.generate($scope.certificate.nic.value).then((urls) => {
-            //     console.log("Certificate issued...", urls);
-            //     toastr.success("Certificate Issued");
-            //     setUrls(urls);
-            //     $scope.$apply(function () {
-            //         $scope.loading.issue = false;
-            //         $scope.reissueSuggestion = false;
-            //     });
-            // }).catch(err => {
-            //     console.warn("Error occurred when issuing the certificate", err);
-            //     if (err.status && err.status == 406) {
-            //         toastr.error(err, (err.data && err.data.message)?err.data.message:"Not eligible for certification");
-            //     } else {
-            //         toastr.error(err, "Couldn't issue the certificate");
-            //     }
-
-            //     $scope.$apply(function () {
-            //         $scope.loading.issue = false;
-            //         $scope.reissueSuggestion = false;
-            //     });
-            // });
 
             // generate reports here
             let pdfDefs = getPdfDef(
@@ -265,28 +279,31 @@ trackerCapture.controller('VaccinationController',
             );
 
             const pdfColorDocGenerator = pdfMake.createPdf(pdfDefs[0]);
-            // const pdfTextDocGenerator = pdfMake.createPdf(pdfDefs[1]);
 
-            pdfColorDocGenerator.getBase64((pdf1) => {
-                console.log(pdf1);
-                // pdfTextDocGenerator.getBase64((pdf2) => {
-                //     VaccineCertService.persist($scope.certificate.teiId, pdf1, pdf2).then((urls) => {
-                //         console.log("Certificate issued...", urls);
-                //         toastr.success("Certificate Issued");
-                //         setUrls(urls);
-                //         $scope.$apply(function () {
-                //             $scope.loading.issue = false;
-                //             $scope.reissueSuggestion = false;
-                //         });
-                //     }).catch(err => {
-                //         console.warn("Error occurred when issuing the certificate", err);
-                //         toastr.error(err, "Couldn't issue the certificate");
-                //         $scope.$apply(function () {
-                //             $scope.loading.issue = false;
-                //             $scope.reissueSuggestion = false;
-                //         });
-                //     });
-                // });
-            });
+            pdfColorDocGenerator.download();
+
+            $scope.loading.issue = false;
+
+            // pdfColorDocGenerator.getBase64((pdf1) => {
+            //     console.log(pdf1);
+            // pdfTextDocGenerator.getBase64((pdf2) => {
+            //     VaccineCertService.persist($scope.certificate.teiId, pdf1, pdf2).then((urls) => {
+            //         console.log("Certificate issued...", urls);
+            //         toastr.success("Certificate Issued");
+            //         setUrls(urls);
+            //         $scope.$apply(function () {
+            //             $scope.loading.issue = false;
+            //             $scope.reissueSuggestion = false;
+            //         });
+            //     }).catch(err => {
+            //         console.warn("Error occurred when issuing the certificate", err);
+            //         toastr.error(err, "Couldn't issue the certificate");
+            //         $scope.$apply(function () {
+            //             $scope.loading.issue = false;
+            //             $scope.reissueSuggestion = false;
+            //         });
+            //     });
+            // });
+            // });
         }
     });

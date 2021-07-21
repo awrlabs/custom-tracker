@@ -6,6 +6,7 @@ function getColorDef(certNo, name, gender, age, address, nic, dose1, dose2) {
     return {
         pageSize: 'A4',
         pageMargins: [30, 25, 30, 0],
+        watermark: 'Not Valid',
         background: function (currentPage, pageSize) {
             return [
                 { image: 'bg', width: pageSize.width, absolutePosition: { x: 0, y: 0 } },
@@ -39,7 +40,7 @@ function getColorDef(certNo, name, gender, age, address, nic, dose1, dose2) {
             {
                 image: 'logo',
                 fit: [300, 80],
-                absolutePosition: { x: 250, y: 5 }
+                absolutePosition: { x: 300, y: 5 }
             },
             {
                 text: 'Ministério da Saúde - Ministry of Health – Timor-Leste',
@@ -89,12 +90,12 @@ function getColorDef(certNo, name, gender, age, address, nic, dose1, dose2) {
                         {
                             table: {
                                 headerRows: 1,
-                                widths: ['*', 'auto', 'auto', 100],
+                                widths: ['*', 'auto', 'auto'],
                                 body: [
-                                    ['', { text: '1st Dose', bold: true }, { text: '2nd Dose', bold: true }, { text: 'Booster Dose', bold: true }],
-                                    [{ text: '1. Data / Date / Loron', bold: true }, valOrEmpty(dose1.date), valOrEmpty(dose2.date), ''],
-                                    [{ text: '2. Produto / Product / Produtu', bold: true }, valOrEmpty(dose1.product), valOrEmpty(dose2.product), ''],
-                                    [{ text: '3. Número go lote / Batch Number / Númeru kodigu ', bold: true }, valOrEmpty(dose1.batch), valOrEmpty(dose2.batch), '']
+                                    ['', { text: '1st Dose', bold: true }, { text: '2nd Dose', bold: true }],
+                                    [{ text: '1. Data / Date / Loron', bold: true }, valOrEmpty(dose1.date), valOrEmpty(dose2.date)],
+                                    [{ text: '2. Produto / Product / Produtu', bold: true }, valOrEmpty(dose1.product), valOrEmpty(dose2.product)],
+                                    [{ text: '3. Número go lote / Batch Number / Númeru kodigu ', bold: true }, valOrEmpty(dose1.batch), valOrEmpty(dose2.batch)]
                                 ]
                             },
                             style: 'detailTable'
@@ -106,7 +107,7 @@ function getColorDef(certNo, name, gender, age, address, nic, dose1, dose2) {
                     ],
 
                 ],
-                margin: [20, 0, 20, 6]
+                margin: [0, 0, 0, 6]
             },
             {
                 text: [
@@ -115,12 +116,13 @@ function getColorDef(certNo, name, gender, age, address, nic, dose1, dose2) {
                     'Dra. Odete da Silva Viegas, Dermatologist'
                 ],
                 style: 'signature',
-                margin: [60, 25, 40, 0]
+                margin: [0, 0, 0, 0]
             },
-            { canvas: [{ type: 'line', x1: 0, y1: 5, x2: 500 - 2 * 30, y2: 5, lineWidth: 2, lineColor: '#548235' }], margin: [0, 5, 0, 5] },
+            { canvas: [{ type: 'line', x1: 0, y1: 5, x2: 600 - 2 * 30, y2: 5, lineWidth: 2, lineColor: '#548235' }], margin: [0, 5, 0, 5] },
             { text: 'Ministrio da Saude, Rua de Caicoli, Caixa Postal 374, Dili, Timor-Leste', style: 'footerText' },
             { text: 'Tel: +670 333 1113, +670 33 XXX XXX | Fax: +670 33 XXX XXX | Email: xxxxxxxxxxx@ms.gov.tl', style: 'footerText' }
         ],
+
         styles: {
             header: {
                 fontSize: 12,
@@ -138,7 +140,7 @@ function getColorDef(certNo, name, gender, age, address, nic, dose1, dose2) {
                 lineHeight: 1.7
             },
             detailValue: {
-                margin: [40, 0, 40, 10],
+                margin: [40, 0, 10, 10],
                 lineHeight: 1.7
             },
             detailTable: {
