@@ -109,7 +109,7 @@ trackerCapture.controller('VaccinationController',
             var selections = CurrentSelection.get();
             $scope.selectedTei = selections.tei;
 
-            console.log("Selection", selections);
+            // console.log("Selection", selections);
 
             if (selections && selections.tei) {
                 $scope.certificate.teiId = selections.tei.trackedEntityInstance;
@@ -168,7 +168,7 @@ trackerCapture.controller('VaccinationController',
                 $scope.eligibility = false;
             }
 
-            console.log("Certificate", $scope.certificate);
+            // console.log("Certificate", $scope.certificate);
         };
 
 
@@ -188,18 +188,18 @@ trackerCapture.controller('VaccinationController',
         });
 
         $scope.$on('eventcreated', function (event, args) {
-            console.log("Event created");
+            //console.log("Event created");
             updateData(true);
         });
 
 
         $scope.$on('dataEntryEventChanged', function (event, args) {
-            console.log("Event changed");
+            //console.log("Event changed");
             updateData(true);
         });
 
         $scope.$on('dataEntryControllerData', function (event, args) {
-            console.log("data changed");
+            //console.log("data changed");
             updateData(true);
         });
 

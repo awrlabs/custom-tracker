@@ -979,8 +979,8 @@ trackerCapture.controller('DataEntryController',
     function broadcastDataEntryControllerData(){
         $rootScope.$broadcast('dataEntryControllerData', {programStages: $scope.programStages,allEventsSorted: $scope.allEventsSorted, eventsByStage: $scope.eventsByStage, addNewEvent: $scope.addNewEvent, openEvent: $scope.openEventExternal, deleteScheduleOverDueEvents: $scope.deleteScheduleAndOverdueEvents, executeRules: $scope.executeRules });
     }
-    
-    $scope.getEvents = function () {
+
+      $scope.getEvents = function () {
 
         $scope.allEventsSorted = [];
         var events = CurrentSelection.getSelectedTeiEvents();        
@@ -1024,6 +1024,17 @@ trackerCapture.controller('DataEntryController',
                     $scope.allEventsSorted.push(dhis2Event);
                 }
             });
+
+            // temp solution to prevent repetaed events
+            Object.keys($scope.eventsByStage).forEach(stageId=>{
+                var eventsArr = $scope.eventsByStage[stageId];
+                var evMap = {};
+                eventsArr.forEach(ev=>{
+                    evMap[ev.event] = ev;
+                });
+                $scope.eventsByStage[stageId] = Object.values(evMap);
+            });
+            // end of temp solution to prevent repetaed events            
             
             $scope.orgUnitNames = CurrentSelection.getOrgUnitNames();
             $scope.fileNames = CurrentSelection.getFileNames();
