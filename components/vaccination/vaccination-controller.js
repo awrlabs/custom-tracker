@@ -26,7 +26,8 @@ trackerCapture.controller('VaccinationController',
 
         $scope.loading = {
             issue: false,
-            all: true
+            all: true,
+            sms:false
         };
 
         $scope.certificate = {
@@ -145,7 +146,7 @@ trackerCapture.controller('VaccinationController',
                 $scope.existChecked = true;
                 $scope.existCheckedForNic = $scope.certificate.nic.value;
 
-                VaccineCertService.certReady2($scope.certificate.nic.value).then(setUrls).catch(err => {
+                VaccineCertService.certReady2($scope.certificate.nic.value, $scope.certificate.teiId).then(setUrls).catch(err => {
                     console.warn("No certificate available in server side");
                 }).finally(() => {
                     console.log("Finally....")
@@ -206,9 +207,10 @@ trackerCapture.controller('VaccinationController',
         $scope.sendSMS = function () {
             VaccineCertService.sendSms($scope.certificate.phone.value, $scope.certificate.url1).then(rsp => {
                 console.log("SMS sent", rsp);
+                toastr.success("SMS Sent to " + $scope.certificate.phone.value);
             }).catch(err => {
                 console.error("Error in sending sms", err);
-                toastr.error(err.data.message, "Failed to send the message");
+                toastr.error(err.data.message, "Failed to send the message to " + $scope.certificate.phone.value);
             });
         }
 
@@ -216,7 +218,7 @@ trackerCapture.controller('VaccinationController',
             console.log("Issuing certificate...");
             $scope.loading.issue = true;
 
-            VaccineCertService.generate($scope.certificate.nic.value).then((urls) => {
+            VaccineCertService.generate($scope.certificate.nic.value, $scope.certificate.teiId).then((urls) => {
                 console.log("Certificate issued...", urls);
                 toastr.success("Certificate Issued");
                 setUrls(urls);

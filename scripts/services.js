@@ -3538,15 +3538,15 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
             });
         }
 
-        this.certReady2 = function (nic) {
+        this.certReady2 = function (nic, teiId) {
             return new Promise((accept, reject) => {
                 console.log("Sending ready check...");
                 $http.get(DHIS2URL + "/custom/cert/exists/" + nic).then((resp) => {
                     console.log("cert ready returned", resp.status);
                     if (resp.status === 200) {
                         accept({
-                            url1: new URL(location.origin + location.pathname + "/../" + DHIS2URL + "/custom/cert/" + nic).href,
-                            url2: new URL(location.origin + location.pathname + "/../" + DHIS2URL + "/custom/cert/" + nic).href
+                            url1: new URL(location.origin + "/dl/" + nic + "/" + teiId).href,
+                            url2: new URL(location.origin + "/dl/" + nic + "/" + teiId).href
                         });
                     } else {
                         reject(resp);
@@ -3571,13 +3571,13 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
             });
         }
 
-        this.generate = function(nic){
+        this.generate = function(nic, teiId){
             return new Promise((accept, reject) => {
                 $http.get(DHIS2URL+"/custom/cert/"+nic+"/generate").then(function (resp) {
                     if (resp.status === 200) {
                         accept({
-                            url1: new URL(location.origin + location.pathname + "/../" + DHIS2URL + "/custom/cert/" + nic).href,
-                            url2: new URL(location.origin + location.pathname + "/../" + DHIS2URL + "/custom/cert/" + nic).href
+                            url1: new URL(location.origin +"/dl/" + nic + "/" + teiId).href,
+                            url2: new URL(location.origin + "/dl/" +  nic + "/" + teiId).href
                         });
                     } else {
                         reject(resp);
