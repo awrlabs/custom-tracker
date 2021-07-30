@@ -205,6 +205,11 @@ trackerCapture.controller('VaccinationController',
         });
 
         $scope.sendSMS = function () {
+            let regex = /(0|94|\+94)\d{9}/gm;
+            if(!regex.test($scope.certificate.phone.value)){
+                toastr.error(err.data.message, "Invalid phone number " + $scope.certificate.phone.value);
+            }
+
             VaccineCertService.sendSms($scope.certificate.phone.value, $scope.certificate.url1).then(rsp => {
                 console.log("SMS sent", rsp);
                 toastr.success("SMS Sent to " + $scope.certificate.phone.value);
