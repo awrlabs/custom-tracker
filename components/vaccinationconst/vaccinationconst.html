@@ -1,0 +1,22 @@
+<div class="panel panel-default-custom" ng-controller="VaccinationConstController">
+    <div ng-show="vaccinationConstWidget.expand" class="panel-body dashboard-widget-container">
+
+        <div ng-if="loading.all">
+            <img src="../images/ajax-loader-bar.gif" />
+        </div>
+
+        <div ng-if="!loading.all">
+
+            <p>Vaccine Product</p>
+			<select ng-model="vaccineOptions.product" ng-change="saveOptions()">
+				<option ng-repeat="product in vaccineProductOptions" value={{product.code}}>{{product.name}}</option>
+			</select>
+            
+            <p>Vaccine Batch</p>
+			<select ng-model="vaccineOptions.batch" ng-change="saveOptions()">
+				<option ng-repeat="batch in vaccineBatchOptions" value={{batch.code}}>{{batch.name}}</option>
+			</select>
+
+        </div>
+    </div>
+</div>
