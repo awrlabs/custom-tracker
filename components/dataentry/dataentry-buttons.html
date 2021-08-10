@@ -1,25 +1,30 @@
-<!-- data entry/event buttons begin -->  
+<!-- data entry/event buttons begin -->
 <div class="row hideInPrint" ng-if="displayCustomForm !== 'TABLE'">
     <div class="col-sm-12">
-        <a href ng-click="completeIncompleteEvent(null, outerDataEntryForm)" 
+        <!-- <a href ng-click="completeIncompleteEvent(null, outerDataEntryForm)" 
             class="btn btn-warning" 
             ng-disabled="!eventEditable(true)"
-            ng-if="currentEvent.eventDate && (currentEvent.status === 'SCHEDULE' || currentEvent.status === 'ACTIVE' || currentEvent.status === 'VISITED')">{{'complete'| translate}}</a>
-        <a href ng-click="completeIncompleteEvent(null, outerDataEntryForm)" 
-            class="btn btn-warning"
+            ng-if="currentEvent.eventDate && (currentEvent.status === 'SCHEDULE' || currentEvent.status === 'ACTIVE' || currentEvent.status === 'VISITED')">{{'complete'| translate}}</a> -->
+        <a href ng-click="saveTempEvent(outerDataEntryForm)" class="btn btn-warning" ng-disabled="!eventEditable(true)"
+            ng-if="currentEvent.eventDate && (currentEvent.status === 'SCHEDULE' || currentEvent.status === 'ACTIVE' || currentEvent.status === 'VISITED')">{{'complete'|
+            translate}}</a>
+
+        <a href ng-click="completeIncompleteEvent(null, outerDataEntryForm)" class="btn btn-warning"
             ng-disabled="!eventEditable(true)"
-            ng-if="currentEvent.eventDate && currentEvent.status === 'COMPLETED'">{{'incomplete'| translate}}</a>    
-        <a href ng-click="skipUnskipEvent()" 
-            class="btn btn-warning" 
-            ng-disabled="!eventEditable(true)"
+            ng-if="currentEvent.eventDate && currentEvent.status === 'COMPLETED'">{{'incomplete'| translate}}</a>
+        <a href ng-click="skipUnskipEvent()" class="btn btn-warning" ng-disabled="!eventEditable(true)"
             ng-if="!currentEvent.eventDate">{{currentEvent.status === 'SKIPPED' ? 'unskip' : 'skip'| translate}}</a>
-    
+
+        <!-- <a href ng-click="saveTempEvent()" 
+            class="btn btn-warning" 
+            ng-disabled="!eventEditable(true)"
+            ng-if="currentEvent.eventDate && (currentEvent.status === 'SCHEDULE' || currentEvent.status === 'ACTIVE' || currentEvent.status === 'VISITED')">Save</a>
+     -->
         <div class="pull-right">
-            <a href ng-click="deleteEvent()" 
-                ng-disabled="!eventEditable(true)"
+            <a href ng-click="deleteEvent()" ng-disabled="!eventEditable(true)"
                 class="btn btn-danger horizontal-spacing">{{'delete'| translate}}</a>
             <a href class="btn btn-info" ng-click="print('print-div');">{{'print_form'| translate}}</a>
         </div>
     </div>
 </div>
- <!-- data entry/event buttons end -->     
+<!-- data entry/event buttons end -->

@@ -397,11 +397,13 @@ trackerCapture.controller('DataEntryController',
                             }
                             else {
                                 //TODO: Alerts is going to be replaced with a proper display mecanism.
+                                console.log("Before showing alert")
                                 alert($scope.prStDes[effect.dataElement.id].dataElement.displayFormName + " was blanked out and hidden by your last action");
                             }
 
                             //Blank out the value:
                             affectedEvent[effect.dataElement.id] = "";
+                            console.log("Before saving")
                             $scope.saveDataValueForEvent($scope.prStDes[effect.dataElement.id], null, affectedEvent, true);
                         }
                     }
@@ -470,19 +472,21 @@ trackerCapture.controller('DataEntryController',
                         //For "ASSIGN" actions where we have a dataelement, we save the calculated value to the dataelement:
                         //Blank out the value:
                         var processedValue = $filter('trimquotes')(effect.data);
-
-                        if($scope.prStDes[effect.dataElement.id].dataElement.optionSet) {
-                            processedValue = OptionSetService.getName(
-                                    $scope.optionSets[$scope.prStDes[effect.dataElement.id].dataElement.optionSet.id].options, processedValue);
-                        }
-                        var prStDe = $scope.prStDes[effect.dataElement.id];
-                        processedValue = CommonUtils.formatDataValue(affectedEvent.event, processedValue, prStDe.dataElement, $scope.optionSets, 'USER');
-                        
-                        affectedEvent[effect.dataElement.id] = processedValue;
-                        $scope.assignedFields[event][effect.dataElement.id] = true;
-                        
-                        if(callerId === $scope.instanceId) {
-                            $scope.saveDataValueForEvent(prStDe, null, affectedEvent, true);
+                        console.log("Checking", $scope.prStDes, effect.dataElement.id)
+                        if($scope.prStDes[effect.dataElement.id]) {
+                            if($scope.prStDes[effect.dataElement.id].dataElement.optionSet) {
+                                processedValue = OptionSetService.getName(
+                                        $scope.optionSets[$scope.prStDes[effect.dataElement.id].dataElement.optionSet.id].options, processedValue);
+                            }
+                            var prStDe = $scope.prStDes[effect.dataElement.id];
+                            processedValue = CommonUtils.formatDataValue(affectedEvent.event, processedValue, prStDe.dataElement, $scope.optionSets, 'USER');
+                            
+                            affectedEvent[effect.dataElement.id] = processedValue;
+                            $scope.assignedFields[event][effect.dataElement.id] = true;
+                            
+                            if(callerId === $scope.instanceId) {
+                                $scope.saveDataValueForEvent(prStDe, null, affectedEvent, true);
+                            }
                         }
                     }
                 }
@@ -1690,6 +1694,35 @@ trackerCapture.controller('DataEntryController',
         
         return def.promise;
     };
+
+    $scope.tempEventHolder = {}
+    $scope.eventPostTimer = {}
+
+    $scope.saveTempEvent = function(outerDataEntryForm){
+        DHIS2EventFactory.update($scope.tempEventHolder[$scope.currentEvent.event]).then(function (response) {
+            if(!response) {
+                $log.warn("Could not perform background update of " + $scope.currentEvent.event + " with value " +
+                        value);
+                return;
+            }
+
+            $scope.updateFileNames();
+        
+            
+            $scope.currentEventOriginal = angular.copy($scope.currentEvent);
+
+            $scope.currentStageEventsOriginal = angular.copy($scope.currentStageEvents);
+
+            $rootScope.$broadcast('tei-report-widget', {events: $scope.allEventsSorted});
+            //In some cases, the rules execution should be suppressed to avoid the 
+            //possibility of infinite loops(rules updating datavalues, that triggers a new 
+            //rule execution)
+            
+                //Run rules on updated data:
+            // $scope.executeRules();
+            $scope.completeIncompleteEvent(null, outerDataEntryForm);
+        });
+    };
     
     $scope.saveDataValueForEvent = function (prStDe, field, eventToSave, backgroundUpdate) {
         
@@ -1749,6 +1782,34 @@ trackerCapture.controller('DataEntryController',
                     }
                 ]
             };
+
+            if($scope.tempEventHolder[eventToSave.event]){
+                var existingDv = 0;
+                for (let index = 0; index < $scope.tempEventHolder[eventToSave.event].dataValues.length; index++) {
+                    if($scope.tempEventHolder[eventToSave.event].dataValues[index].dataElement === prStDe.dataElement.id){
+                        existingDv = index;
+                        break;
+                    }
+                    existingDv++;
+                }
+                
+                $scope.tempEventHolder[eventToSave.event].dataValues[existingDv] = ev.dataValues[0];
+            } else {
+                $scope.tempEventHolder[eventToSave.event] = ev;
+
+                // copy current datavalues
+                for (let index = 0; index < $scope.currentEvent.dataValues.length; index++) {
+                    if($scope.currentEvent.dataValues[index].dataElement !== prStDe.dataElement.id){
+                        $scope.tempEventHolder[eventToSave.event].dataValues.push($scope.currentEvent.dataValues[index]);
+                    }
+                }
+            }
+
+            console.log("Event to be saved ", $scope.tempEventHolder);
+
+            $scope.executeRules();
+            return;
+
             return DHIS2EventFactory.updateForSingleValue(ev).then(function (response) {
                 if(!response) {
                     if(!backgroundUpdate) {
