@@ -1,0 +1,77 @@
+<div class="panel panel-default-custom" ng-controller="VaccinationConstController">
+
+    <div class="panel-heading handle bold">
+        Vaccination Options
+        <span class="pull-right widget-link">
+            <a class="small-horizontal-spacing" href ng-click="expandCollapse(vaccinationConstWidget)">
+                <span ng-show="vaccinationConstWidget.expand"><i class="fa fa-chevron-up"
+                        ng-attr-title="{{collapseLabel}}"></i></span>
+                <span ng-show="!vaccinationConstWidget.expand"><i class="fa fa-chevron-down"
+                        ng-attr-title="{{expandLabel}}"></i></span>
+            </a>
+            <a ng-show="userAuthority.canAdministerDashboard"
+                class="small-horizontal-spacing" href ng-click="removeWidget(vaccinationConstWidget)"
+                ng-attr-title="{{removeLabel}}"><i class="fa fa-times-circle"></i></a>
+        </span>
+    </div>
+    <!-- <div ng-show="vaccinationConstWidget.expand" class="panel-body dashboard-widget-container"> -->
+    <div class="panel-body dashboard-widget-container">
+
+        <!-- <div ng-if="loading.all">
+            <img src="../images/ajax-loader-bar.gif" />
+        </div> -->
+
+        <!-- <div ng-if="!loading.all"> -->
+
+            <!-- <p>Vaccine Product</p>
+			<select ng-model="vaccineOptions.product" ng-change="saveOptions()">
+				<option ng-repeat="product in vaccineProductOptions" value={{product.code}}>{{product.displayName}}</option>
+			</select>
+            
+            <p>Vaccine Batch</p>
+			<select ng-model="vaccineOptions.batch" ng-change="saveOptions()">
+				<option ng-repeat="batch in vaccineBatchOptions" value={{batch.code}}>{{batch.displayName}}</option>
+			</select> -->
+
+        <!-- </div> -->
+
+        
+        <table class="table table-striped table-bordered">
+            <tr>
+                <td>
+                    Vaccine Product
+                </td>
+                <td>
+                    <ui-select ng-model="vaccineOptions.product"
+                            theme="select2"
+                            name="vaccProd"
+                            on-select="saveOptions()"
+                            style="width: 100%">
+                        <ui-select-match allow-clear="false" class="form-control-ui-select"  ng-attr-placeholder="{{'select_or_search' | translate}}">{{$select.selected.displayName  || $select.selected}}</ui-select-match>
+                        <ui-select-choices  repeat="option in vaccineProductOptions | filter:{displayName:$select.search} | limitTo:maxOptionSize">
+                          <span ng-bind-html="option.displayName | highlight: $select.search"></span>
+                        </ui-select-choices>
+                    </ui-select>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>
+                    Vaccine Batch
+                </td>
+                <td>
+                    <ui-select ng-model="vaccineOptions.batch"
+                            theme="select2"
+                            name="vaccBatch"
+                            on-select="saveOptions()"
+                            style="width: 100%">
+                        <ui-select-match allow-clear="false" class="form-control-ui-select"  ng-attr-placeholder="{{'select_or_search' | translate}}">{{$select.selected.displayName  || $select.selected}}</ui-select-match>
+                        <ui-select-choices  repeat="option in vaccineBatchOptions | filter:{displayName:$select.search} | limitTo:maxOptionSize">
+                          <span ng-bind-html="option.displayName | highlight: $select.search"></span>
+                        </ui-select-choices>
+                    </ui-select>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>

@@ -62,6 +62,7 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
         w.profileWidget = { title: 'profile', view: "components/profile/profile.html", show: true, expand: true, parent: 'smallerWidget', order: 2, canBeUsedAsTopBar: true, topBarView: "components/profile/profile-topbar.html" };
         w.relationshipWidget = { title: 'relationships', view: "components/relationship/relationship.html", show: true, expand: true, parent: 'smallerWidget', order: 3 };
         w.notesWidget = { title: 'notes', view: "components/notes/notes.html", show: true, expand: true, parent: 'smallerWidget', order: 4 };
+        w.vaccinationConstWidget = { title: 'vaccination options', view: "components/vaccinationconst/vaccinationconst.html", show: true, expand: true, parent: 'smallerWidget', order: 4 },
         w.vaccinationWidget = { title: 'vaccination', view: "components/vaccination/vaccination.html", show: true, expand: true, parent: 'smallerWidget', order: 1 };
         w.messagingWidget = { title: 'messaging', view: "components/messaging/messaging.html", show: false, expand: true, parent: 'smallerWidget', order: 5 };
         var defaultLayout = new Object();
