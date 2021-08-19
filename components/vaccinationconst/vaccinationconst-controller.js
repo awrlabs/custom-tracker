@@ -12,8 +12,8 @@ trackerCapture.controller('VaccinationConstController',
         var selections = CurrentSelection.get().optionSets;
 
         $scope.vaccineOptions = {
-            product: null,
-            batch: null,
+            product: SessionStorageService.get('VACCINE_PRODUCT'),
+            batch: SessionStorageService.get('VACCINE_BATCH'),
         };
 
         $scope.vaccineProductOptions = selections['m8kSC9Sl2mE'].options;
