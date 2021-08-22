@@ -1681,6 +1681,17 @@ trackerCapture.controller('DataEntryController',
             }
             else{
                 saveReturn.then(function(){
+                    if(prStDe.dataElement.id === "sEgbpR5sGP6" && event["sEgbpR5sGP6"] === "true") {
+                        // Retrieving Product and Batch from session storage
+                        if(SessionStorageService.get('VACCINE_PRODUCT')) {
+                            event["J1HZdZNWqMb"] = SessionStorageService.get('VACCINE_PRODUCT').displayName;
+                            $scope.saveDataValueForEvent($scope.prStDes["J1HZdZNWqMb"], null, event, false);
+        
+                            event["xv7LXLV8RLT"] = SessionStorageService.get('VACCINE_BATCH').displayName;
+                            $scope.saveDataValueForEvent($scope.prStDes["xv7LXLV8RLT"], null, event, false);                            
+                        }
+                        // End retrieving Product and Batch from session storage    
+                    }
                     def.resolve("saved");
                 }, function(){
                     def.reject("error");
