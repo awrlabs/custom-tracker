@@ -58,7 +58,7 @@ trackerCapture.controller('VaccinationController',
                     id: "fZ3diyIwzDF"
                 },
                 dose2: {
-                    id: "fZ3diyIwzDF"
+                    id: "fxIEVGCv63j"
                 },
             },
             teiId: undefined,
@@ -144,7 +144,7 @@ trackerCapture.controller('VaccinationController',
                     });
 
                     if ($scope.dosesMap[ev.programStage]) {
-                        $scope.dosesMap[ev.programStage].date = eventData["HLnrx4pz8H1"];
+                        $scope.dosesMap[ev.programStage].date = eventData["HLnrx4pz8H1"] || ev.eventDate;
                         $scope.dosesMap[ev.programStage].given = eventData["sEgbpR5sGP6"] || eventData["N9h0aYEaS0i"];
                         $scope.dosesMap[ev.programStage].batch = batchOptions[eventData["xv7LXLV8RLT"]] || batchOptions[eventData["T8o6oTkS2OH"]];
                         $scope.dosesMap[ev.programStage].product = productOptions[eventData["R50Qdvrf768"]] || productOptions[eventData["J1HZdZNWqMb"]];
