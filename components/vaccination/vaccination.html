@@ -62,6 +62,14 @@
                         <img src="../images/ajax-loader-bar.gif" ng-if="loading.sms" />
                     </button>
 
+                    <button type="button" class="btn btn-primary" ng-click="sendEmail()" ng-disabled="loading.email"
+                        ng-if="certificate.url1 && certificate.email.value">
+                        <i class="fa fa-envelope-o"></i>
+                        <!-- {{'send_cert_sms'| translate}} -->
+                        Email
+                        <img src="../images/ajax-loader-bar.gif" ng-if="loading.email" />
+                    </button>
+
                     <button type="button" class="btn btn-primary" ng-click="reissue()"
                         ng-if="certificate.url1 && userAuthority.canIssueCertificates &&  userAuthority.canReIssueCertificates"
                         ng-disabled="loading.issue">
