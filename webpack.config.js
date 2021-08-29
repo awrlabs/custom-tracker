@@ -16,7 +16,7 @@ try {
     console.warn('\nWARNING! Failed to load DHIS config:', e.message);
     console.info('Using default config');
     dhisConfig = {
-        baseUrl: 'http://135.181.131.10/test1/',
+        baseUrl: 'https://covid-19.health.gov.lk/vaccine/',
         certUrl: 'http://localhost:8080/',
         authorization: process.env.DHIS_AUTH // admin:district
     };
