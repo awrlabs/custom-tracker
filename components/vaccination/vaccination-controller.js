@@ -27,7 +27,8 @@ trackerCapture.controller('VaccinationController',
         $scope.loading = {
             issue: false,
             all: true,
-            sms:false
+            sms: false,
+            email: false
         };
 
         $scope.certificate = {
@@ -54,6 +55,9 @@ trackerCapture.controller('VaccinationController',
             },
             phone: {
                 id: "eYViMjtiWRA",
+            },
+            email: {
+                id: "ZwggFsKQLBl",
             },
             doses: {
                 dose1: {
@@ -206,17 +210,31 @@ trackerCapture.controller('VaccinationController',
 
         $scope.sendSMS = function () {
             let regex = /(0|94|\+94)\d{9}/gm;
-            if(!regex.test($scope.certificate.phone.value)){
+            if (!regex.test($scope.certificate.phone.value)) {
                 toastr.error(err.data.message, "Invalid phone number " + $scope.certificate.phone.value);
                 return;
             }
-
+            $scope.loading.sms = true;
             VaccineCertService.sendSms($scope.certificate.phone.value, $scope.certificate.url1).then(rsp => {
                 console.log("SMS sent", rsp);
                 toastr.success("SMS Sent to " + $scope.certificate.phone.value);
+                $scope.loading.sms = false;
             }).catch(err => {
                 console.error("Error in sending sms", err);
                 toastr.error(err.data.message, "Failed to send the message to " + $scope.certificate.phone.value);
+                $scope.loading.sms = false;
+            });
+        }
+
+        $scope.sendEmail = function () {
+            $scope.loading.email = true;
+            VaccineCertService.sendEmail($scope.certificate.name.value, $scope.certificate.email.value, $scope.certificate.url1).then(rsp => {
+                toastr.success("Email Sent to " + $scope.certificate.email.value);
+                $scope.loading.email = false;
+            }).catch(err => {
+                console.error("Error in sending email", err);
+                toastr.error(err.data.message, "Failed to send the email to " + $scope.certificate.email.value);
+                $scope.loading.email = false;
             });
         }
 

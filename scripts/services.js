@@ -3572,6 +3572,14 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
             });
         }
 
+        this.sendEmail = function(name, email, url){
+            return $http({
+                method: 'GET',
+                url: DHIS2URL + `/custom/notify/email?name=${name}&email=${email}&url=${url}`,
+                headers: { 'Content-Type': 'application/json' }
+            });
+        }
+
         this.generate = function(nic, teiId){
             return new Promise((accept, reject) => {
                 $http.get(DHIS2URL+"/custom/cert/"+nic+"/generate").then(function (resp) {
