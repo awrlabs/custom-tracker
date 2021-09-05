@@ -1,6 +1,15 @@
 <!-- event dates/scheduling begin -->
 <div class="row" ng-if="displayCustomForm !== 'TABLE' && displayCustomForm !== 'COMPARE'">
-        
+    <!-- Showing orgunit SLK -->
+    <div class="col-md-12" 
+    ng-if="currentEvent.ouName">
+        Organisation Unit
+        <input type="text"
+               class="form-control hideInPrint"
+               ng-disabled="true"
+               ng-attr-value={{currentEvent.ouName}}>
+    </div>
+    <!-- Done showing orgunit -->
     <div ng-class="{true: 'col-md-12', false: 'col-md-6'} [currentStage.hideDueDate || currentStage.periodType !== undefined]">
         {{currentStage.executionDateLabel ? currentStage.executionDateLabel : 'report_date' | translate}}
         <span class="required">*</span>

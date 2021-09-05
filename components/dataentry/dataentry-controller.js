@@ -397,13 +397,11 @@ trackerCapture.controller('DataEntryController',
                             }
                             else {
                                 //TODO: Alerts is going to be replaced with a proper display mecanism.
-                                console.log("Before showing alert")
                                 alert($scope.prStDes[effect.dataElement.id].dataElement.displayFormName + " was blanked out and hidden by your last action");
                             }
 
                             //Blank out the value:
                             affectedEvent[effect.dataElement.id] = "";
-                            console.log("Before saving")
                             $scope.saveDataValueForEvent($scope.prStDes[effect.dataElement.id], null, affectedEvent, true);
                         }
                     }
@@ -472,7 +470,6 @@ trackerCapture.controller('DataEntryController',
                         //For "ASSIGN" actions where we have a dataelement, we save the calculated value to the dataelement:
                         //Blank out the value:
                         var processedValue = $filter('trimquotes')(effect.data);
-                        console.log("Checking", $scope.prStDes, effect.dataElement.id)
                         if($scope.prStDes[effect.dataElement.id]) {
                             if($scope.prStDes[effect.dataElement.id].dataElement.optionSet) {
                                 processedValue = OptionSetService.getName(
@@ -1020,6 +1017,10 @@ trackerCapture.controller('DataEntryController',
                         dhis2Event = EventUtils.processEvent(dhis2Event, eventStage, $scope.optionSets, $scope.prStDes);
                         $scope.eventsByStage[dhis2Event.programStage].push(dhis2Event);
                         
+                        dhis2Event.ouName = "Determining...";
+                        TCOrgUnitService.get(dhis2Event.orgUnit).then((ou)=>{
+                            dhis2Event.ouName = ou.displayName;
+                        });
                         if ($scope.currentStage && $scope.currentStage.id === dhis2Event.programStage) {
                             $scope.currentEvent = dhis2Event;
                         }

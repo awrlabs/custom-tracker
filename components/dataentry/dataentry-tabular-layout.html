@@ -14,6 +14,13 @@
     </div>
 
     <div ng-show="dataentryTabularWidget.expand" class="panel-body dashboard-widget-container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="alert alert-danger" role="alert">
+                    Update: You must click on the <b>Save & Complete</b> button to prevent data loss!
+                </div>
+            </div>
+        </div>
         <div ng-if="selectedEnrollment && selectedEnrollment.enrollment">
             <div>
                 <div class="row">
