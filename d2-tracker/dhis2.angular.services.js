@@ -1,19 +1,19 @@
 /* Pagination service */
 /* global angular, dhis2, moment */
 
-// const CUSTOM_GROUPS = {
-//     EDIT_DASHBOARD : "MK1AjP2qhnZ",
-//     ISSUE_CERTIFICATE: "UqgVgpQvys0",
-//     REISSUE_CERTIFICATE: "W5QBajVBJcK"
-// };
+const CUSTOM_GROUPS = {
+    EDIT_DASHBOARD : "MK1AjP2qhnZ",
+    ISSUE_CERTIFICATE: "UqgVgpQvys0",
+    REISSUE_CERTIFICATE: "W5QBajVBJcK"
+};
 
 
 // test2
-const CUSTOM_GROUPS = {
-    EDIT_DASHBOARD : "SiziwzLJtGF",
-    ISSUE_CERTIFICATE: "KhaG6ehA5GI",
-    REISSUE_CERTIFICATE: "Sq6Mw3LZnIR"
-};
+// const CUSTOM_GROUPS = {
+//     EDIT_DASHBOARD : "SiziwzLJtGF",
+//     ISSUE_CERTIFICATE: "KhaG6ehA5GI",
+//     REISSUE_CERTIFICATE: "Sq6Mw3LZnIR"
+// };
 
 var d2Services = angular.module('d2Services', ['ngResource'])
 

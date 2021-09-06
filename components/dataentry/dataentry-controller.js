@@ -1733,6 +1733,9 @@ trackerCapture.controller('DataEntryController',
                 //Run rules on updated data:
             // $scope.executeRules();
             $scope.completeIncompleteEvent(null, outerDataEntryForm);
+
+            // LK set no pending changes
+            SessionStorageService.set('PENDING_CHANGES', false);
         });
     };
     
@@ -1818,6 +1821,9 @@ trackerCapture.controller('DataEntryController',
             }
 
             console.log("Event to be saved ", $scope.tempEventHolder);
+
+            // LK setting pending changes
+            SessionStorageService.set('PENDING_CHANGES', true);
 
             $scope.executeRules();
             return;

@@ -53,7 +53,7 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
 
         var w = {};
         w.enrollmentWidget = { title: 'enrollment', view: "components/enrollment/enrollment.html", show: false, expand: true, parent: 'biggerWidget', order: 0 };
-        w.indicatorWidget = { title: 'indicators', view: "components/rulebound/rulebound.html", show: false, expand: true, parent: 'biggerWidget', order: 1, canBeUsedAsTopBar: true, topBarView: "components/rulebound/rulebound-topbar.html#indicators" };
+        w.indicatorWidget = { title: 'indicators', view: "components/rulebound/rulebound.html", show: true, expand: true, parent: 'biggerWidget', order: 1, canBeUsedAsTopBar: true, topBarView: "components/rulebound/rulebound-topbar.html#indicators" };
         w.dataentryWidget = { title: 'dataentry', view: "components/dataentry/dataentry.html", show: false, expand: true, parent: 'biggerWidget', order: 2 };
         w.dataentryTabularWidget = { title: 'dataentryTabular', view: "components/dataentry/dataentry-tabular-layout.html", show: true, expand: true, parent: 'biggerWidget', order: 3 };
         w.reportWidget = { title: 'report', view: "components/report/tei-report.html", show: false, expand: true, parent: 'biggerWidget', order: 4 };
@@ -62,7 +62,7 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
         w.profileWidget = { title: 'profile', view: "components/profile/profile.html", show: true, expand: true, parent: 'smallerWidget', order: 3, canBeUsedAsTopBar: true, topBarView: "components/profile/profile-topbar.html" };
         w.relationshipWidget = { title: 'relationships', view: "components/relationship/relationship.html", show: false, expand: true, parent: 'smallerWidget', order: 3 };
         w.notesWidget = { title: 'notes', view: "components/notes/notes.html", show: false, expand: true, parent: 'smallerWidget', order: 4 };
-        w.vaccinationConstWidget = { title: 'vaccination options', view: "components/vaccinationconst/vaccinationconst.html", show: true, expand: true, parent: 'smallerWidget', order: 1 },
+        w.vaccinationConstWidget = { title: 'vaccination options', view: "components/vaccinationconst/vaccinationconst.html", show: false, expand: true, parent: 'smallerWidget', order: 1 },
         w.vaccinationWidget = { title: 'vaccination', view: "components/vaccination/vaccination.html", show: true, expand: true, parent: 'smallerWidget', order: 2 };
         w.messagingWidget = { title: 'messaging', view: "components/messaging/messaging.html", show: false, expand: true, parent: 'smallerWidget', order: 5 };
         var defaultLayout = new Object();
@@ -72,7 +72,7 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
         var programStageLayout = {};
 
         var getDefaultLayout = function (customLayout) {
-            var dashboardLayout = { customLayout: customLayout, defaultLayout: defaultLayout };
+            var dashboardLayout = { customLayout: null, defaultLayout: defaultLayout }; // setting all custom layouts null
             var promise = $http.get(DHIS2URL + '/dataStore/tracker-capture/keyTrackerDashboardDefaultLayout').then(function (response) {
                 //angular.extend(dashboardLayout.defaultLayout, response.data); LK 
                 return dashboardLayout;

@@ -633,7 +633,26 @@ trackerCapture.controller('DashboardController',
         });
     };
 
-    $scope.back = function () {
+    $scope.back = function(){
+        var changes = SessionStorageService.get('PENDING_CHANGES');
+        if(changes) {
+            var modalOptions = {
+                closeButtonText: 'no',
+                actionButtonText: 'yes',
+                headerText: 'Going Back?',
+                bodyText: 'You have some unsaved changes to the events. Going back will discard those changes. Make sure you have clicked "Complete & Save" before going back. Do you really want to go back?'
+            };
+            
+            ModalService.showModal({}, modalOptions).then(function (result) {
+                $scope.doBack();
+            });
+        } else {
+            $scope.doBack();
+        }
+    };
+
+    $scope.doBack = function () {
+        SessionStorageService.set('PENDING_CHANGES', false);
         if ( $scope.returnUrl ) {
             var returnUrl = '../' + atob($scope.returnUrl).replace(/^\//,"");
             $window.location.href = returnUrl;
