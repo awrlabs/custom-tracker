@@ -53,7 +53,7 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
 
         var w = {};
         w.enrollmentWidget = { title: 'enrollment', view: "components/enrollment/enrollment.html", show: false, expand: true, parent: 'biggerWidget', order: 0 };
-        w.indicatorWidget = { title: 'indicators', view: "components/rulebound/rulebound.html", show: true, expand: true, parent: 'biggerWidget', order: 1, canBeUsedAsTopBar: true, topBarView: "components/rulebound/rulebound-topbar.html#indicators" };
+        w.indicatorWidget = { title: 'indicators', view: "components/rulebound/rulebound.html", show: false, expand: true, parent: 'biggerWidget', order: 1, canBeUsedAsTopBar: true, topBarView: "components/rulebound/rulebound-topbar.html#indicators" };
         w.dataentryWidget = { title: 'dataentry', view: "components/dataentry/dataentry.html", show: false, expand: true, parent: 'biggerWidget', order: 2 };
         w.dataentryTabularWidget = { title: 'dataentryTabular', view: "components/dataentry/dataentry-tabular-layout.html", show: true, expand: true, parent: 'biggerWidget', order: 3 };
         w.reportWidget = { title: 'report', view: "components/report/tei-report.html", show: false, expand: true, parent: 'biggerWidget', order: 4 };
@@ -72,6 +72,11 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
         var programStageLayout = {};
 
         var getDefaultLayout = function (customLayout) {
+            if(customLayout) {
+                Object.keys(customLayout).forEach(k=>{
+                    defaultLayout['DEFAULT'].topBarSettings = customLayout[k].topBarSettings;
+                });
+            }
             var dashboardLayout = { customLayout: null, defaultLayout: defaultLayout }; // setting all custom layouts null
             var promise = $http.get(DHIS2URL + '/dataStore/tracker-capture/keyTrackerDashboardDefaultLayout').then(function (response) {
                 //angular.extend(dashboardLayout.defaultLayout, response.data); LK 

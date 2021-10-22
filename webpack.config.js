@@ -16,11 +16,12 @@ try {
     console.warn('\nWARNING! Failed to load DHIS config:', e.message);
     console.info('Using default config');
     dhisConfig = {
-        baseUrl: 'https://covid-19.health.gov.lk/test2/',
+        baseUrl: 'https://covid-19.health.gov.lk/vaccine/',
         certUrl: 'http://localhost:8080/',
         authorization: process.env.DHIS_AUTH // admin:district
     };
 }
+
 console.log(JSON.stringify(dhisConfig, null, 2), '\n');
 
 function bypass(req, res, opt) {

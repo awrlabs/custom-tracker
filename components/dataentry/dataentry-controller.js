@@ -34,7 +34,8 @@ trackerCapture.controller('DataEntryController',
                 AuthorityService,
                 AccessUtils,
                 TCOrgUnitService,
-                UsersService) {
+                UsersService,
+                OrgUnitFactory) {
     
     //Unique instance id for the controller:
     $scope.APIURL = DHIS2URL;
@@ -2516,26 +2517,40 @@ trackerCapture.controller('DataEntryController',
         return true;
     }
 
-    $scope.canDeleteEvent = function() {
+    $scope.canDeleteEvent = async function() {
         if(!$scope.currentStage || !$scope.currentStage.access || !$scope.currentStage.access.data.write) return false;
-        return true;
+
+        // LK - Check org unit
+        let foundOu = false;
+        let ouPath = $scope.currentEvent.orgUnitPath;
+        let ous = await OrgUnitFactory.getEditableOrgUnits();
+        for(let ou of ous){
+            if(ouPath.indexOf(ou.id)>-1){
+                foundOu = true;
+                break;
+            }
+        }
+        
+        return foundOu;
     };
 
     $scope.deleteEvent = function () {
-        if(!$scope.canDeleteEvent()){
-            var bodyText = $translate.instant('you_do_not_have_the_necessary_authorities_to_delete') +' '+ $translate.instant('this') +' '+$translate.instant('event').toLowerCase();
-            var headerText = $translate.instant('delete_failed');
-            return NotificationService.showNotifcationDialog(headerText, bodyText);
-        }
-        var modalOptions = {
-            closeButtonText: 'cancel',
-            actionButtonText: 'delete',
-            headerText: 'delete',
-            bodyText: 'are_you_sure_to_delete_event_with_audit'
-        };
-
-        ModalService.showModal({}, modalOptions).then(function (result) {
-            $scope.executeDeleteEvent();
+        $scope.canDeleteEvent().then(canDelete=>{
+            if(!canDelete){
+                var bodyText = $translate.instant('you_do_not_have_the_necessary_authorities_to_delete') +' '+ $translate.instant('this') +' '+$translate.instant('event').toLowerCase();
+                var headerText = $translate.instant('delete_failed');
+                return NotificationService.showNotifcationDialog(headerText, bodyText);
+            }
+            var modalOptions = {
+                closeButtonText: 'cancel',
+                actionButtonText: 'delete',
+                headerText: 'delete',
+                bodyText: 'are_you_sure_to_delete_event_with_audit'
+            };
+    
+            ModalService.showModal({}, modalOptions).then(function (result) {
+                $scope.executeDeleteEvent();
+            });
         });
     };
         

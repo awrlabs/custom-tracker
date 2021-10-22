@@ -4304,6 +4304,14 @@ var d2Services = angular.module('d2Services', ['ngResource'])
             }            
             return def.promise;
         },
+        getEditableOrgUnits:function(){
+            var def = $q.defer();     
+            var url = DHIS2URL + '/me.json?fields=organisationUnits[id,displayName,programs[id],level,path,children[id,displayName,programs[id],level,children[id]]]&paging=false';
+                $http.get( url ).then(function(response){
+                    def.resolve( response.data.organisationUnits );
+            });
+            return def.promise;
+        },
         getOrgUnits: function(uid,fieldUrl){
             var url = DHIS2URL + '/organisationUnits.json?filter=id:eq:'+uid+'&'+fieldUrl+'&paging=false';
             orgUnitTreePromise = $http.get(url).then(function(response){
